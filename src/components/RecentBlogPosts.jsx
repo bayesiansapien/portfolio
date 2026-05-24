@@ -39,7 +39,16 @@ export default function RecentBlogPosts() {
         const data = await response.json();
         
         if (data.status === 'ok' && data.items && data.items.length > 0) {
-          const parsedPosts = data.items.slice(0, 3).map((item, index) => {
+          const articlesOnly = data.items.filter(
+            (item) => !item.enclosure?.type?.startsWith('audio/')
+          );
+
+          if (articlesOnly.length === 0) {
+            setUsingFallback(true);
+            return;
+          }
+
+          const parsedPosts = articlesOnly.slice(0, 3).map((item, index) => {
             const date = new Date(item.pubDate);
             const formattedDate = date.toLocaleDateString('en-US', { 
               month: 'short', 
