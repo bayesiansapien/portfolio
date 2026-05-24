@@ -5,8 +5,15 @@ export default function Home() {
   return (
     <>
       <main className="max-w-none mx-auto px-4 py-16">
-        <section className="grid justify-center pt-3 pb-12">
-          <div className="flex justify-center items-center gap-6 max-w-7xl mx-auto">
+        <section className="relative grid justify-center pt-3 pb-12">
+          <img
+            src="/bayesian-sigil.png"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[clamp(360px,75vw,900px)] aspect-square z-[1] opacity-[0.14] drop-shadow-[0_0_40px_rgba(82,246,197,0.25)]"
+            style={{ mixBlendMode: 'screen' }}
+          />
+          <div className="relative flex justify-center items-center gap-6 max-w-7xl mx-auto">
             
             <div
               id="hero-bubble"
