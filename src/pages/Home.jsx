@@ -13,10 +13,38 @@ export default function Home() {
     return () => window.removeEventListener('keydown', onKey);
   }, [revealed]);
 
+  // Vertical offset from section center down to where the avatar sits
+  // (bubble padding + half the avatar's height). Used to position the bubble
+  // so the avatar lines up with the sigil's circular composition center.
+  const AVATAR_OFFSET = 100;
+
   return (
     <>
       <main className="max-w-none mx-auto px-4 py-16">
-        <section className="relative grid justify-center pt-3 pb-12 min-h-[640px]">
+        <section className="relative grid justify-center pt-3 pb-12 min-h-[820px] md:min-h-[860px]">
+
+          <div
+            aria-hidden="true"
+            className={[
+              'pointer-events-none absolute left-1/2 top-1/2',
+              '-translate-x-1/2 -translate-y-[40%] z-[1]',
+              'rounded-full aspect-square',
+              'transition-all duration-700 ease-out',
+              revealed
+                ? 'opacity-0 w-[clamp(420px,80vw,820px)]'
+                : 'opacity-100 w-[clamp(440px,88vw,920px)]'
+            ].join(' ')}
+            style={{
+              background:
+                'radial-gradient(circle at center, ' +
+                'rgba(11,18,32,0) 28%, ' +
+                'rgba(82,246,197,0.06) 39%, ' +
+                'rgba(11,18,32,0.92) 50%, ' +
+                'rgba(11,18,32,0.55) 66%, ' +
+                'rgba(11,18,32,0) 88%)',
+              filter: 'blur(8px)'
+            }}
+          />
 
           <button
             type="button"
@@ -24,11 +52,11 @@ export default function Home() {
             aria-label={revealed ? 'BayesianSapien sigil' : 'Reveal about me'}
             tabIndex={revealed ? -1 : 0}
             className={[
-              'group absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[2]',
+              'group absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[40%] z-[2]',
               'flex items-center justify-center bg-transparent border-0 p-0',
               'transition-all duration-700 ease-out',
               revealed
-                ? 'opacity-[0.14] pointer-events-none'
+                ? 'opacity-[0.07] pointer-events-none'
                 : 'opacity-95 cursor-pointer hover:scale-[1.03]'
             ].join(' ')}
             style={{ mixBlendMode: 'screen' }}
@@ -40,41 +68,41 @@ export default function Home() {
               className={[
                 'select-none aspect-square transition-all duration-700 ease-out',
                 revealed
-                  ? 'w-[clamp(360px,75vw,900px)]'
-                  : 'w-[clamp(280px,60vw,520px)] drop-shadow-[0_0_60px_rgba(82,246,197,0.45)]'
+                  ? 'w-[clamp(360px,75vw,820px)]'
+                  : 'w-[clamp(360px,80vw,700px)] drop-shadow-[0_0_80px_rgba(82,246,197,0.50)]'
               ].join(' ')}
             />
           </button>
 
           <div
             className={[
-              'absolute left-1/2 -translate-x-1/2 bottom-8 z-[5]',
+              'absolute left-1/2 -translate-x-1/2 z-[3]',
               'transition-all duration-500 ease-out',
               revealed
                 ? 'opacity-0 translate-y-2 pointer-events-none'
                 : 'opacity-100 translate-y-0'
             ].join(' ')}
+            style={{ top: 'calc(50% + 260px)' }}
           >
             <button
               type="button"
               onClick={() => setRevealed(true)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full ring-1 ring-emerald-300/40 bg-black/30 backdrop-blur-md text-emerald-200 hover:text-emerald-100 hover:ring-emerald-300/70 hover:bg-black/40 transition animate-glow-pulse"
+              className="inline-flex items-center px-7 py-3 rounded-full ring-2 ring-amber-300/50 bg-black/40 backdrop-blur-md text-amber-200 hover:text-amber-100 hover:ring-amber-300/80 hover:bg-black/50 transition animate-glow-pulse text-[15px] tracking-[0.04em] font-medium"
             >
-              <span className="text-sm tracking-wide">About me</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M5 12h14M13 5l7 7-7 7" />
-              </svg>
+              About me
             </button>
           </div>
 
           <div
             className={[
-              'relative flex justify-center items-start gap-6 max-w-7xl mx-auto',
+              'absolute left-1/2 -translate-x-1/2',
+              'flex justify-center items-start gap-6 w-full max-w-7xl px-4',
               'transition-all duration-700 ease-out',
               revealed
                 ? 'opacity-100 scale-100 pointer-events-auto'
                 : 'opacity-0 scale-[0.94] pointer-events-none'
             ].join(' ')}
+            style={{ top: `calc(50% - ${AVATAR_OFFSET}px)` }}
             aria-hidden={!revealed}
           >
 
@@ -157,7 +185,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="hidden lg:block sticky top-24">
+            <div className="hidden lg:block self-start">
               <div className="relative rounded-2xl p-3 ring-1 ring-white/15 backdrop-blur-xl shadow-[0_0_30px_rgba(82,246,197,0.1)] overflow-hidden backdrop-blur-2xl backdrop-saturate-150 bg-black/5">
                 <div className="flex flex-col items-center gap-4">
 
