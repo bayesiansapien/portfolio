@@ -57,6 +57,20 @@ export default function Home() {
                   </svg>
                   <span>RSS Feed</span>
                 </a>
+
+                <a
+                  href="https://bayesiansapien.github.io/cere-bro/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 transition"
+                  aria-label="Research Wiki — daily AI research synthesis"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                  </svg>
+                  <span>Research Wiki</span>
+                </a>
               </div>
             </div>
 
