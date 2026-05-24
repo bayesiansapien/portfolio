@@ -42,7 +42,7 @@ export default function Home() {
               background:
                 'radial-gradient(circle at center, ' +
                 'rgba(11,18,32,0) 30%, ' +
-                'rgba(251,191,36,0.18) 41%, ' +
+                'rgba(82,246,197,0.18) 41%, ' +
                 'rgba(11,18,32,0.92) 52%, ' +
                 'rgba(11,18,32,0.45) 66%, ' +
                 'rgba(11,18,32,0) 82%)',
