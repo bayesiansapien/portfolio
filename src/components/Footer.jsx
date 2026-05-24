@@ -31,13 +31,6 @@ export default function Footer() {
                   <path d="M236 0h46L181 115l118 156h-92.6l-72.5-94.8L59 271H13l107-123L0 0h94.9l65.5 86.6L236 0zm-16.1 243h25.5L80.4 26H53.2l166.7 217z"/>
                 </svg>
               </a>
-              <a href="https://medium.com/@amit02093" target="_blank" rel="noreferrer" className="flex items-center justify-center w-9 h-9 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="Medium">
-                <svg width="18" height="18" viewBox="0 0 1770 1000" fill="#000000" className="group-hover:fill-emerald-600 transition">
-                  <circle cx="500" cy="500" r="500"/>
-                  <ellipse ry="475" rx="250" cy="501" cx="1296"/>
-                  <ellipse cx="1682" cy="502" rx="88" ry="424"/>
-                </svg>
-              </a>
               <a href="https://bayesiansapien.substack.com/" target="_blank" rel="noreferrer" className="flex items-center justify-center w-9 h-9 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="Substack">
                 <svg width="18" height="18" viewBox="0 0 16 16" fill="#FF6719" className="group-hover:fill-emerald-600 transition">
                   <path d="M15 3.604H1v1.891h14v-1.89ZM1 7.208V16l7-3.926L15 16V7.208zM15 0H1v1.89h14z"/>
