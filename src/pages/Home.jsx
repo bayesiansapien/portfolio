@@ -13,20 +13,23 @@ export default function Home() {
     return () => window.removeEventListener('keydown', onKey);
   }, [revealed]);
 
-  // Vertical offset from section center down to where the avatar sits
-  // (bubble padding + half the avatar's height). Used to position the bubble
-  // so the avatar lines up with the sigil's circular composition center.
+  // Anchor point inside the section where the sigil's circular composition
+  // center AND the bubble's avatar center both align. 38% (vs 50%) lifts the
+  // whole composition into the upper-middle of the viewport.
+  const ANCHOR_TOP = '38%';
+  // Bubble padding-top + half the avatar's height. Used to offset the bubble
+  // upward so the avatar's center lands on the anchor.
   const AVATAR_OFFSET = 100;
 
   return (
     <>
-      <main className="max-w-none mx-auto px-4 py-16">
-        <section className="relative grid justify-center pt-3 pb-12 min-h-[820px] md:min-h-[860px]">
+      <main className="max-w-none mx-auto px-4 pt-4 pb-16">
+        <section className="relative grid justify-center pb-12 min-h-[860px] md:min-h-[900px]">
 
           <div
             aria-hidden="true"
             className={[
-              'pointer-events-none absolute left-1/2 top-1/2',
+              'pointer-events-none absolute left-1/2',
               '-translate-x-1/2 -translate-y-[40%] z-[1]',
               'rounded-full aspect-square',
               'transition-all duration-700 ease-out',
@@ -35,6 +38,7 @@ export default function Home() {
                 : 'opacity-100 w-[clamp(440px,88vw,920px)]'
             ].join(' ')}
             style={{
+              top: ANCHOR_TOP,
               background:
                 'radial-gradient(circle at center, ' +
                 'rgba(11,18,32,0) 28%, ' +
@@ -52,14 +56,14 @@ export default function Home() {
             aria-label={revealed ? 'BayesianSapien sigil' : 'Reveal about me'}
             tabIndex={revealed ? -1 : 0}
             className={[
-              'group absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[40%] z-[2]',
+              'group absolute left-1/2 -translate-x-1/2 -translate-y-[40%] z-[2]',
               'flex items-center justify-center bg-transparent border-0 p-0',
               'transition-all duration-700 ease-out',
               revealed
                 ? 'opacity-[0.07] pointer-events-none'
                 : 'opacity-95 cursor-pointer hover:scale-[1.03]'
             ].join(' ')}
-            style={{ mixBlendMode: 'screen' }}
+            style={{ top: ANCHOR_TOP, mixBlendMode: 'screen' }}
           >
             <img
               src="/bayesian-sigil.png"
@@ -82,7 +86,7 @@ export default function Home() {
                 ? 'opacity-0 translate-y-2 pointer-events-none'
                 : 'opacity-100 translate-y-0'
             ].join(' ')}
-            style={{ top: 'calc(50% + 260px)' }}
+            style={{ top: `calc(${ANCHOR_TOP} + 340px)` }}
           >
             <button
               type="button"
@@ -102,7 +106,7 @@ export default function Home() {
                 ? 'opacity-100 scale-100 pointer-events-auto'
                 : 'opacity-0 scale-[0.94] pointer-events-none'
             ].join(' ')}
-            style={{ top: `calc(50% - ${AVATAR_OFFSET}px)` }}
+            style={{ top: `calc(${ANCHOR_TOP} - ${AVATAR_OFFSET}px)` }}
             aria-hidden={!revealed}
           >
 
