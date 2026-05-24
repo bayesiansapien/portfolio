@@ -104,12 +104,15 @@
     }
   }
   
-  // Get hero bubble for masking
+  // Get hero bubble for masking — skip when it's collapsed so the canvas
+  // particles flow uninterrupted around the BayesianSapien sigil.
   function getHeroBubble() {
     const el = document.getElementById("hero-bubble");
     if (!el) return null;
-    
+    if (el.dataset && el.dataset.revealed === "false") return null;
+
     const rect = el.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return null;
     return {
       x: rect.left - 20,
       y: rect.top - 20,

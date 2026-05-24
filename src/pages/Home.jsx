@@ -1,24 +1,100 @@
+import { useState, useEffect } from 'react';
 import RecentBlogPosts from '../components/RecentBlogPosts';
 import Footer from '../components/Footer';
 
 export default function Home() {
+  const [revealed, setRevealed] = useState(false);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape' && revealed) setRevealed(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [revealed]);
+
   return (
     <>
       <main className="max-w-none mx-auto px-4 py-16">
-        <section className="relative grid justify-center pt-3 pb-12">
-          <img
-            src="/bayesian-sigil.png"
-            alt=""
-            aria-hidden="true"
-            className="pointer-events-none select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[clamp(360px,75vw,900px)] aspect-square z-[1] opacity-[0.14] drop-shadow-[0_0_40px_rgba(82,246,197,0.25)]"
+        <section className="relative grid justify-center pt-3 pb-12 min-h-[640px]">
+
+          <button
+            type="button"
+            onClick={() => !revealed && setRevealed(true)}
+            aria-label={revealed ? 'BayesianSapien sigil' : 'Reveal about me'}
+            tabIndex={revealed ? -1 : 0}
+            className={[
+              'group absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[2]',
+              'flex items-center justify-center bg-transparent border-0 p-0',
+              'transition-all duration-700 ease-out',
+              revealed
+                ? 'opacity-[0.14] pointer-events-none'
+                : 'opacity-95 cursor-pointer hover:scale-[1.03]'
+            ].join(' ')}
             style={{ mixBlendMode: 'screen' }}
-          />
-          <div className="relative flex justify-center items-center gap-6 max-w-7xl mx-auto">
-            
+          >
+            <img
+              src="/bayesian-sigil.png"
+              alt=""
+              aria-hidden="true"
+              className={[
+                'select-none aspect-square transition-all duration-700 ease-out',
+                revealed
+                  ? 'w-[clamp(360px,75vw,900px)]'
+                  : 'w-[clamp(280px,60vw,520px)] drop-shadow-[0_0_60px_rgba(82,246,197,0.45)]'
+              ].join(' ')}
+            />
+          </button>
+
+          <div
+            className={[
+              'absolute left-1/2 -translate-x-1/2 bottom-8 z-[5]',
+              'transition-all duration-500 ease-out',
+              revealed
+                ? 'opacity-0 translate-y-2 pointer-events-none'
+                : 'opacity-100 translate-y-0'
+            ].join(' ')}
+          >
+            <button
+              type="button"
+              onClick={() => setRevealed(true)}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full ring-1 ring-emerald-300/40 bg-black/30 backdrop-blur-md text-emerald-200 hover:text-emerald-100 hover:ring-emerald-300/70 hover:bg-black/40 transition animate-glow-pulse"
+            >
+              <span className="text-sm tracking-wide">About me</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M5 12h14M13 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          <div
+            className={[
+              'relative flex justify-center items-start gap-6 max-w-7xl mx-auto',
+              'transition-all duration-700 ease-out',
+              revealed
+                ? 'opacity-100 scale-100 pointer-events-auto'
+                : 'opacity-0 scale-[0.94] pointer-events-none'
+            ].join(' ')}
+            aria-hidden={!revealed}
+          >
+
             <div
               id="hero-bubble"
+              data-revealed={revealed ? 'true' : 'false'}
               className="relative w-full mx-auto text-center rounded-3xl p-6 md:p-8 ring-1 ring-white/20 backdrop-blur-xl shadow-[0_0_70px_rgba(82,246,197,0.22)] after:content-[''] after:absolute after:inset-0 after:rounded-3xl after:pointer-events-none after:shadow-[0_0_140px_rgba(82,246,197,0.26)] overflow-hidden backdrop-blur-2xl backdrop-saturate-150 z-10 max-w-[820px] md:max-w-[980px] lg:max-w-[1120px] poppins bg-black/10"
             >
+              <button
+                type="button"
+                onClick={() => setRevealed(false)}
+                aria-label="Close about me"
+                tabIndex={revealed ? 0 : -1}
+                className="absolute top-3 right-3 z-20 w-9 h-9 rounded-full ring-1 ring-white/15 hover:ring-white/30 bg-black/30 hover:bg-black/40 backdrop-blur text-slate-300 hover:text-white flex items-center justify-center transition"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+
               <img
                 src="/avatar.png"
                 className="mx-auto mb-6 w-36 h-36 md:w-36 md:h-36 rounded-full object-cover ring-1 ring-white/15 shadow-lg"
@@ -32,7 +108,7 @@ export default function Home() {
               <p className="mx-auto max-w-[1200px] lg:max-w-[1240px] text-[16px] md:text-[17px] lg:text-[14px] md:text-[15px] lg:text-[16px] tracking-[0.005em] leading-7 md:leading-7 lg:leading-7">
                 A Minimalist Bayesian Sapien contributing to the universe's entropy, being an AI researcher building efficient, sustainable intelligence optimizing models via pruning, distillation, quantization, and routing to deliver lighter and faster systems. I also apply Quantum ML to combinatorial optimization, turning vast search spaces into practical results. My work spans RL, test time compute, Agentic Intelligence Optimization, and reasoning systems.
               </p>
-              
+
               <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center items-center">
                 <a
                   href="https://bayesiansapien.substack.com/subscribe"
@@ -49,7 +125,7 @@ export default function Home() {
                   </svg>
                   <span>Subscribe by Email</span>
                 </a>
-                
+
                 <a
                   href="https://bayesiansapien.substack.com/"
                   target="_blank"
@@ -84,7 +160,7 @@ export default function Home() {
             <div className="hidden lg:block sticky top-24">
               <div className="relative rounded-2xl p-3 ring-1 ring-white/15 backdrop-blur-xl shadow-[0_0_30px_rgba(82,246,197,0.1)] overflow-hidden backdrop-blur-2xl backdrop-saturate-150 bg-black/5">
                 <div className="flex flex-col items-center gap-4">
-                  
+
                   <a href="/resume.pdf" target="_blank" rel="noreferrer" className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="CV">
                     <span className="text-xs font-medium text-gray-700 group-hover:text-emerald-600 transition">CV</span>
                   </a>

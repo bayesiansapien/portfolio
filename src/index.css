@@ -39,6 +39,24 @@ body { background: #0b1220; }
 /* Poppins helper for hero bubble only */
 .poppins { font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; }
 
+/* Soft pulsing emerald glow used on the "About me" reveal button */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 22px rgba(82, 246, 197, 0.18);
+    transform: translateY(0);
+  }
+  50% {
+    box-shadow: 0 0 44px rgba(82, 246, 197, 0.42);
+    transform: translateY(-1px);
+  }
+}
+.animate-glow-pulse {
+  animation: glowPulse 2.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-glow-pulse { animation: none; }
+}
+
 
 @supports not (backdrop-filter: blur(1px)){
   }
