@@ -41,11 +41,11 @@ export default function Home() {
               top: ANCHOR_TOP,
               background:
                 'radial-gradient(circle at center, ' +
-                'rgba(11,18,32,0) 28%, ' +
-                'rgba(82,246,197,0.06) 39%, ' +
-                'rgba(11,18,32,0.92) 50%, ' +
-                'rgba(11,18,32,0.55) 66%, ' +
-                'rgba(11,18,32,0) 88%)',
+                'rgba(251,191,36,0) 28%, ' +
+                'rgba(251,191,36,0.22) 39%, ' +
+                'rgba(120,53,15,0.62) 50%, ' +
+                'rgba(180,83,9,0.32) 65%, ' +
+                'rgba(251,191,36,0) 86%)',
               filter: 'blur(8px)'
             }}
           />
@@ -53,14 +53,14 @@ export default function Home() {
           <button
             type="button"
             onClick={() => !revealed && setRevealed(true)}
-            aria-label={revealed ? 'BayesianSapien sigil' : 'Reveal about me'}
+            aria-label={revealed ? 'BayesianSapien sigil' : 'Tap to know the Sapien'}
             tabIndex={revealed ? -1 : 0}
             className={[
               'group absolute left-1/2 -translate-x-1/2 -translate-y-[40%] z-[2]',
               'flex items-center justify-center bg-transparent border-0 p-0',
               'transition-all duration-700 ease-out',
               revealed
-                ? 'opacity-[0.07] pointer-events-none'
+                ? 'opacity-[0.01] pointer-events-none'
                 : 'opacity-95 cursor-pointer hover:scale-[1.03]'
             ].join(' ')}
             style={{ top: ANCHOR_TOP, mixBlendMode: 'screen' }}
@@ -93,7 +93,7 @@ export default function Home() {
               onClick={() => setRevealed(true)}
               className="inline-flex items-center px-7 py-3 rounded-full ring-2 ring-amber-300/50 bg-black/40 backdrop-blur-md text-amber-200 hover:text-amber-100 hover:ring-amber-300/80 hover:bg-black/50 transition animate-glow-pulse text-[15px] tracking-[0.04em] font-medium"
             >
-              About me
+              Tap to Know the Sapien
             </button>
           </div>
 
@@ -228,7 +228,17 @@ export default function Home() {
           </div>
         </section>
 
-        <RecentBlogPosts />
+        <div
+          className={[
+            'transition-all duration-700 ease-out overflow-hidden',
+            revealed
+              ? 'opacity-100 max-h-[5000px]'
+              : 'opacity-0 max-h-0 pointer-events-none'
+          ].join(' ')}
+          aria-hidden={!revealed}
+        >
+          <RecentBlogPosts />
+        </div>
       </main>
 
       <Footer />
