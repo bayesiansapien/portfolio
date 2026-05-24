@@ -34,8 +34,8 @@ export default function Home() {
               'rounded-full aspect-square',
               'transition-all duration-700 ease-out',
               revealed
-                ? 'opacity-0 w-[clamp(360px,60vw,640px)]'
-                : 'opacity-100 w-[clamp(380px,64vw,680px)]'
+                ? 'opacity-0 w-[clamp(320px,52vw,540px)]'
+                : 'opacity-100 w-[clamp(340px,56vw,580px)]'
             ].join(' ')}
             style={{
               top: ANCHOR_TOP,
