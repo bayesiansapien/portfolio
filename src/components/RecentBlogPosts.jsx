@@ -3,24 +3,27 @@ import { useState, useEffect } from 'react';
 const FALLBACK_POSTS = [
   {
     id: 1,
-    title: "Understanding and Implementing Qwen3 From Scratch",
-    date: "Sep 6, 2025",
-    excerpt: "Previously, I compared the most notable open-weight architectures of 2025 in The Big LLM Architecture Comparison.",
-    link: "https://bayesiansapien.substack.com/"
+    title: "The Dark Matter Economics of Claude Code",
+    date: "May 18, 2026",
+    excerpt: "Most of what you pay for is invisible to the UI. This is the field guide to seeing it plus a small open toolkit that surfaces it.",
+    link: "https://bayesiansapien.substack.com/p/the-dark-matter-economics-of-claude",
+    thumbnail: "https://substack-post-media.s3.amazonaws.com/public/images/f473abfe-3850-4010-8133-72f208d65023_1672x941.png"
   },
   {
     id: 2,
-    title: "From GPT-2 to gpt-oss: Analyzing the Architectural Advances",
-    date: "Aug 9, 2025",
-    excerpt: "OpenAI just released their new open-weight LLMs this week: gpt-oss-120b and gpt-oss-20b.",
-    link: "https://bayesiansapien.substack.com/"
+    title: "The Simulacrum of Sapience: Intelligence Performed, Never Possessed",
+    date: "Apr 5, 2026",
+    excerpt: "The convergent case from philosophy, neuroscience, and machine learning that eloquent intermediate tokens are the alibi, not the act.",
+    link: "https://bayesiansapien.substack.com/p/the-simulacrum-of-sapience-intelligence",
+    thumbnail: "https://substackcdn.com/image/fetch/$s_!LHRC!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffb45fabd-4222-4d92-b0e1-bfd317004f99_2938x1472.png"
   },
   {
     id: 3,
-    title: "The Big LLM Architecture Comparison",
-    date: "Jul 15, 2025",
-    excerpt: "A comprehensive comparison of the most notable open-weight LLM architectures released in 2025.",
-    link: "https://bayesiansapien.substack.com/"
+    title: "The 2026 Transformer Efficiency Revolution: Four Papers, One Coherent Argument",
+    date: "Mar 29, 2026",
+    excerpt: "There is a particular kind of scientific excitement that happens when four separate research groups, working independently, end up converging on the same structural problem from four different directions.",
+    link: "https://bayesiansapien.substack.com/p/the-2026-transformer-efficiency-revolution",
+    thumbnail: "https://substackcdn.com/image/fetch/$s_!Ylnz!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F675067d3-eb0d-436e-bb3e-bf6640608c75_681x818.png"
   }
 ];
 
@@ -30,59 +33,65 @@ export default function RecentBlogPosts() {
   const [usingFallback, setUsingFallback] = useState(false);
 
   useEffect(() => {
-    const fetchRSSFeed = async () => {
+    const controller = new AbortController();
+    let timedOut = false;
+    const timeoutId = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, 5000);
+
+    const fetchPosts = async () => {
       try {
-        const POSTS_API = 'https://bayesiansapien.substack.com/api/v1/posts?limit=25';
-        const proxied = `https://api.allorigins.win/get?url=${encodeURIComponent(POSTS_API)}`;
+        const response = await fetch('/api/posts', { signal: controller.signal });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-        const response = await fetch(proxied);
-        const wrapper = await response.json();
-        const items = JSON.parse(wrapper.contents || '[]');
+        const data = await response.json();
+        const articles = Array.isArray(data.articles) ? data.articles : [];
 
-        const articlesOnly = Array.isArray(items)
-          ? items.filter((p) => p.type === 'newsletter')
-          : [];
-
-        if (articlesOnly.length === 0) {
+        if (articles.length === 0) {
           setUsingFallback(true);
           return;
         }
 
-        const parsedPosts = articlesOnly.slice(0, 3).map((post, index) => {
-          const date = new Date(post.post_date);
-          const formattedDate = date.toLocaleDateString('en-US', {
+        const parsedPosts = articles.map((post, index) => {
+          const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric',
             year: 'numeric'
           });
 
-          const rawDescription = post.description || post.subtitle || '';
           const tempDiv = document.createElement('div');
-          tempDiv.innerHTML = rawDescription;
+          tempDiv.innerHTML = post.description || '';
           const cleanDescription = tempDiv.textContent || tempDiv.innerText || '';
           const excerpt = cleanDescription.slice(0, 280) + (cleanDescription.length > 280 ? '...' : '');
 
           return {
             id: index + 1,
             title: post.title,
-            link: post.canonical_url,
+            link: post.link,
             date: formattedDate,
             excerpt: excerpt || 'Read more on Substack...',
-            thumbnail: post.cover_image || post.cover_image_url || null
+            thumbnail: post.thumbnail || null
           };
         });
 
         setPosts(parsedPosts);
         setUsingFallback(false);
       } catch (err) {
+        if (err.name === 'AbortError' && !timedOut) return;
         console.error('Error fetching Substack posts:', err);
         setUsingFallback(true);
       } finally {
-        setLoading(false);
+        clearTimeout(timeoutId);
+        if (!controller.signal.aborted || timedOut) setLoading(false);
       }
     };
 
-    fetchRSSFeed();
+    fetchPosts();
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, []);
 
   if (loading) {
