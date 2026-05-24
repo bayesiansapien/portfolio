@@ -32,65 +32,50 @@ export default function RecentBlogPosts() {
   useEffect(() => {
     const fetchRSSFeed = async () => {
       try {
-        const RSS_URL = 'https://bayesiansapien.substack.com/feed';
-        const rss2jsonUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
-        
-        const response = await fetch(rss2jsonUrl);
-        const data = await response.json();
-        
-        if (data.status === 'ok' && data.items && data.items.length > 0) {
-          const articlesOnly = data.items.filter(
-            (item) => !item.enclosure?.type?.startsWith('audio/')
-          );
+        const POSTS_API = 'https://bayesiansapien.substack.com/api/v1/posts?limit=25';
+        const proxied = `https://api.allorigins.win/get?url=${encodeURIComponent(POSTS_API)}`;
 
-          if (articlesOnly.length === 0) {
-            setUsingFallback(true);
-            return;
-          }
+        const response = await fetch(proxied);
+        const wrapper = await response.json();
+        const items = JSON.parse(wrapper.contents || '[]');
 
-          const parsedPosts = articlesOnly.slice(0, 3).map((item, index) => {
-            const date = new Date(item.pubDate);
-            const formattedDate = date.toLocaleDateString('en-US', { 
-              month: 'short', 
-              day: 'numeric', 
-              year: 'numeric' 
-            });
-            
-            let thumbnail = null;
-            if (item.thumbnail) {
-              thumbnail = item.thumbnail;
-            } else if (item.enclosure && item.enclosure.link) {
-              thumbnail = item.enclosure.link;
-            } else if (item.content || item.description) {
-              const content = item.content || item.description;
-              const imgMatch = content.match(/<img[^>]+src="([^">]+)"/);
-              if (imgMatch) {
-                thumbnail = imgMatch[1];
-              }
-            }
-            
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = item.description || '';
-            const cleanDescription = tempDiv.textContent || tempDiv.innerText || '';
-            const excerpt = cleanDescription.slice(0, 280) + (cleanDescription.length > 280 ? '...' : '');
-            
-            return {
-              id: index + 1,
-              title: item.title,
-              link: item.link,
-              date: formattedDate,
-              excerpt: excerpt || 'Read more on Substack...',
-              thumbnail: thumbnail
-            };
-          });
-          
-          setPosts(parsedPosts);
-          setUsingFallback(false);
-        } else {
+        const articlesOnly = Array.isArray(items)
+          ? items.filter((p) => p.type === 'newsletter')
+          : [];
+
+        if (articlesOnly.length === 0) {
           setUsingFallback(true);
+          return;
         }
+
+        const parsedPosts = articlesOnly.slice(0, 3).map((post, index) => {
+          const date = new Date(post.post_date);
+          const formattedDate = date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          });
+
+          const rawDescription = post.description || post.subtitle || '';
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = rawDescription;
+          const cleanDescription = tempDiv.textContent || tempDiv.innerText || '';
+          const excerpt = cleanDescription.slice(0, 280) + (cleanDescription.length > 280 ? '...' : '');
+
+          return {
+            id: index + 1,
+            title: post.title,
+            link: post.canonical_url,
+            date: formattedDate,
+            excerpt: excerpt || 'Read more on Substack...',
+            thumbnail: post.cover_image || post.cover_image_url || null
+          };
+        });
+
+        setPosts(parsedPosts);
+        setUsingFallback(false);
       } catch (err) {
-        console.error('Error fetching RSS feed:', err);
+        console.error('Error fetching Substack posts:', err);
         setUsingFallback(true);
       } finally {
         setLoading(false);
