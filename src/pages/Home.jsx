@@ -34,19 +34,21 @@ export default function Home() {
               'rounded-full aspect-square',
               'transition-all duration-700 ease-out',
               revealed
-                ? 'opacity-0 w-[clamp(380px,68vw,720px)]'
-                : 'opacity-100 w-[clamp(400px,72vw,780px)]'
+                ? 'opacity-0 w-[clamp(420px,74vw,820px)]'
+                : 'opacity-100 w-[clamp(440px,78vw,860px)]'
             ].join(' ')}
             style={{
               top: ANCHOR_TOP,
               background:
                 'radial-gradient(circle at center, ' +
-                'rgba(11,18,32,0) 30%, ' +
-                'rgba(82,246,197,0.18) 41%, ' +
-                'rgba(11,18,32,0.92) 52%, ' +
-                'rgba(11,18,32,0.45) 66%, ' +
-                'rgba(11,18,32,0) 82%)',
-              filter: 'blur(8px)'
+                'rgba(82,246,197,0) 28%, ' +
+                'rgba(82,246,197,0.12) 38%, ' +
+                'rgba(82,246,197,0.34) 48%, ' +
+                'rgba(82,246,197,0.22) 60%, ' +
+                'rgba(82,246,197,0.10) 74%, ' +
+                'rgba(82,246,197,0.03) 88%, ' +
+                'rgba(82,246,197,0) 100%)',
+              filter: 'blur(10px)'
             }}
           />
 
