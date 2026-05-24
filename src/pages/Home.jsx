@@ -34,27 +34,25 @@ export default function Home() {
               'rounded-full aspect-square',
               'transition-all duration-700 ease-out',
               revealed
-                ? 'opacity-0 w-[clamp(320px,52vw,540px)]'
-                : 'opacity-100 w-[clamp(340px,56vw,580px)]'
+                ? 'opacity-0 w-[clamp(440px,68vw,720px)]'
+                : 'opacity-100 w-[clamp(460px,72vw,760px)]'
             ].join(' ')}
             style={{
               top: ANCHOR_TOP,
               background:
                 'radial-gradient(circle at center, ' +
-                'rgba(82,246,197,0) 20%, ' +
-                'rgba(82,246,197,0.015) 28%, ' +
-                'rgba(82,246,197,0.05) 36%, ' +
-                'rgba(82,246,197,0.09) 44%, ' +
-                'rgba(82,246,197,0.13) 50%, ' +
-                'rgba(82,246,197,0.14) 54%, ' +
-                'rgba(82,246,197,0.12) 60%, ' +
-                'rgba(82,246,197,0.09) 67%, ' +
-                'rgba(82,246,197,0.06) 74%, ' +
-                'rgba(82,246,197,0.035) 82%, ' +
-                'rgba(82,246,197,0.018) 90%, ' +
-                'rgba(82,246,197,0.006) 96%, ' +
-                'rgba(82,246,197,0) 100%)',
-              filter: 'blur(18px)'
+                'rgba(82,246,197,0) 18%, ' +
+                'rgba(82,246,197,0.05) 28%, ' +
+                'rgba(82,246,197,0.03) 35%, ' +
+                'rgba(0,0,0,0.18) 44%, ' +
+                'rgba(0,0,0,0.26) 52%, ' +
+                'rgba(0,0,0,0.22) 60%, ' +
+                'rgba(0,0,0,0.16) 68%, ' +
+                'rgba(0,0,0,0.10) 76%, ' +
+                'rgba(0,0,0,0.05) 85%, ' +
+                'rgba(0,0,0,0.02) 92%, ' +
+                'rgba(0,0,0,0) 100%)',
+              filter: 'blur(20px)'
             }}
           />
 
