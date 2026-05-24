@@ -42,7 +42,7 @@ export default function RecentBlogPosts() {
 
     const fetchPosts = async () => {
       try {
-        const response = await fetch('/api/posts', { signal: controller.signal });
+        const response = await fetch('/posts.json', { signal: controller.signal });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const data = await response.json();

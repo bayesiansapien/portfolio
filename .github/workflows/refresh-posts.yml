@@ -1,0 +1,35 @@
+name: Refresh recent posts
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch latest posts
+        run: node scripts/fetch-posts.mjs
+
+      - name: Commit if changed
+        run: |
+          if [[ -n "$(git status --porcelain public/posts.json)" ]]; then
+            git config user.name "Amit Singh Bhatti"
+            git config user.email "amit02093@gmail.com"
+            git add public/posts.json
+            git commit -m "Refresh recent posts cache"
+            git push
+          else
+            echo "No changes to posts.json — skipping commit."
+          fi
