@@ -86,7 +86,7 @@ export default function Home() {
                 ? 'opacity-0 translate-y-2 pointer-events-none'
                 : 'opacity-100 translate-y-0'
             ].join(' ')}
-            style={{ top: `calc(${ANCHOR_TOP} + 340px)` }}
+            style={{ top: `calc(${ANCHOR_TOP} + 420px)` }}
           >
             <button
               type="button"
@@ -241,7 +241,17 @@ export default function Home() {
         </div>
       </main>
 
-      <Footer />
+      <div
+        className={[
+          'transition-all duration-700 ease-out overflow-hidden',
+          revealed
+            ? 'opacity-100 max-h-[400px]'
+            : 'opacity-0 max-h-0 pointer-events-none'
+        ].join(' ')}
+        aria-hidden={!revealed}
+      >
+        <Footer />
+      </div>
     </>
   );
 }
