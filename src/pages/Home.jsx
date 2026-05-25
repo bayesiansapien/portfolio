@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 
 export default function Home() {
   const [revealed, setRevealed] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -59,7 +60,11 @@ export default function Home() {
           <button
             type="button"
             onClick={() => !revealed && setRevealed(true)}
-            aria-label={revealed ? 'BayesianSapien sigil' : 'Tap to know the Sapien'}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            onFocus={() => setHovered(true)}
+            onBlur={() => setHovered(false)}
+            aria-label={revealed ? 'BayesianSapien sigil' : 'Unravel the Sapien'}
             tabIndex={revealed ? -1 : 0}
             className={[
               'group absolute left-1/2 -translate-x-1/2 -translate-y-[40%] z-[2]',
@@ -82,25 +87,45 @@ export default function Home() {
                   : 'w-[clamp(360px,80vw,700px)] drop-shadow-[0_0_80px_rgba(82,246,197,0.50)]'
               ].join(' ')}
             />
+
+            {!revealed && (
+              <div
+                aria-hidden="true"
+                className="absolute pointer-events-none animate-compass-pulse"
+                style={{
+                  top: '23.5%',
+                  left: '50%',
+                  width: '30%',
+                  aspectRatio: '1',
+                  background:
+                    'radial-gradient(circle at center, ' +
+                    'rgba(251,191,36,0.65) 0%, ' +
+                    'rgba(251,191,36,0.42) 18%, ' +
+                    'rgba(251,191,36,0.22) 34%, ' +
+                    'rgba(82,246,197,0.18) 52%, ' +
+                    'rgba(82,246,197,0.08) 70%, ' +
+                    'rgba(82,246,197,0) 90%)',
+                  mixBlendMode: 'screen',
+                  filter: 'blur(8px)'
+                }}
+              />
+            )}
           </button>
 
           <div
+            aria-hidden="true"
             className={[
-              'absolute left-1/2 -translate-x-1/2 z-[3]',
+              'absolute left-1/2 -translate-x-1/2 z-[5] pointer-events-none',
               'transition-all duration-500 ease-out',
-              revealed
-                ? 'opacity-0 translate-y-2 pointer-events-none'
-                : 'opacity-100 translate-y-0'
+              !revealed && hovered
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-3'
             ].join(' ')}
             style={{ top: `calc(${ANCHOR_TOP} + 420px)` }}
           >
-            <button
-              type="button"
-              onClick={() => setRevealed(true)}
-              className="inline-flex items-center px-7 py-3 rounded-full ring-2 ring-amber-300/50 bg-black/40 backdrop-blur-md text-amber-200 hover:text-amber-100 hover:ring-amber-300/80 hover:bg-black/50 transition animate-glow-pulse text-[15px] tracking-[0.04em] font-medium"
-            >
-              Tap to Know the Sapien
-            </button>
+            <span className="font-script text-4xl md:text-5xl text-emerald-200 drop-shadow-[0_0_18px_rgba(82,246,197,0.55)] tracking-wide whitespace-nowrap">
+              Unravel the Sapien
+            </span>
           </div>
 
           <div
