@@ -48,13 +48,13 @@ body { background: #0b1220; }
 @keyframes sigilGlow {
   0%, 100% {
     filter:
-      drop-shadow(0 0 22px rgba(82, 246, 197, 0.38))
-      drop-shadow(0 0 60px rgba(82, 246, 197, 0.16));
+      drop-shadow(0 0 22px rgba(251, 191, 36, 0.38))
+      drop-shadow(0 0 60px rgba(251, 146, 60, 0.16));
   }
   50% {
     filter:
-      drop-shadow(0 0 40px rgba(82, 246, 197, 0.70))
-      drop-shadow(0 0 110px rgba(82, 246, 197, 0.34));
+      drop-shadow(0 0 40px rgba(251, 191, 36, 0.70))
+      drop-shadow(0 0 110px rgba(251, 146, 60, 0.34));
   }
 }
 .animate-sigil-glow {
@@ -65,8 +65,8 @@ body { background: #0b1220; }
   .animate-sigil-glow {
     animation: none;
     filter:
-      drop-shadow(0 0 30px rgba(82, 246, 197, 0.50))
-      drop-shadow(0 0 80px rgba(82, 246, 197, 0.25));
+      drop-shadow(0 0 30px rgba(251, 191, 36, 0.50))
+      drop-shadow(0 0 80px rgba(251, 146, 60, 0.25));
   }
 }
 
