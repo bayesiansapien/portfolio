@@ -93,8 +93,8 @@ export default function Home() {
                 aria-hidden="true"
                 className="absolute pointer-events-none animate-compass-pulse"
                 style={{
-                  top: '19%',
-                  left: '50%',
+                  top: '26.5%',
+                  left: '49.7%',
                   width: '38%',
                   aspectRatio: '1',
                   background:
