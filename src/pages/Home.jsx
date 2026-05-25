@@ -84,19 +84,9 @@ export default function Home() {
                 'select-none aspect-square transition-all duration-700 ease-out',
                 revealed
                   ? 'w-[clamp(360px,75vw,820px)]'
-                  : 'w-[clamp(360px,80vw,700px)] drop-shadow-[0_0_80px_rgba(82,246,197,0.50)]'
+                  : 'w-[clamp(360px,80vw,700px)] animate-sigil-glow'
               ].join(' ')}
             />
-
-            {!revealed && (
-              <img
-                src="/bayesian-sigil-gear.png"
-                alt=""
-                aria-hidden="true"
-                className="absolute inset-0 w-full h-full pointer-events-none select-none animate-gear-glow"
-                style={{ mixBlendMode: 'screen' }}
-              />
-            )}
           </button>
 
           <div

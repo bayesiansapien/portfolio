@@ -42,36 +42,31 @@ body { background: #0b1220; }
 /* Allura cursive — matches the BayesianSapien wordmark inside the sigil */
 .font-script { font-family: "Allura", "Brush Script MT", cursive; }
 
-/* Gear glow — applied to the gear-only overlay PNG. Drop-shadow filter
-   radiates light from the gear's own opaque pixels, so the gear itself
-   reads as the luminous object rather than a light source behind it.
-   Stacked shadows give layered tight + diffuse halos. */
-@keyframes gearGlow {
+/* Pulsing emerald glow applied to the whole sigil. Two stacked drop-shadows
+   give a tight inner halo + diffuse outer wash, breathing in unison so the
+   seal feels alive without being noisy. */
+@keyframes sigilGlow {
   0%, 100% {
-    opacity: 0.85;
     filter:
-      drop-shadow(0 0 8px rgba(251, 191, 36, 0.70))
-      drop-shadow(0 0 24px rgba(251, 146, 60, 0.40));
+      drop-shadow(0 0 22px rgba(82, 246, 197, 0.38))
+      drop-shadow(0 0 60px rgba(82, 246, 197, 0.16));
   }
   50% {
-    opacity: 1;
     filter:
-      drop-shadow(0 0 16px rgba(251, 191, 36, 1.0))
-      drop-shadow(0 0 44px rgba(251, 146, 60, 0.70))
-      drop-shadow(0 0 90px rgba(251, 191, 36, 0.40));
+      drop-shadow(0 0 40px rgba(82, 246, 197, 0.70))
+      drop-shadow(0 0 110px rgba(82, 246, 197, 0.34));
   }
 }
-.animate-gear-glow {
-  animation: gearGlow 2.8s ease-in-out infinite;
-  will-change: filter, opacity;
+.animate-sigil-glow {
+  animation: sigilGlow 3.2s ease-in-out infinite;
+  will-change: filter;
 }
 @media (prefers-reduced-motion: reduce) {
-  .animate-gear-glow {
+  .animate-sigil-glow {
     animation: none;
-    opacity: 0.95;
     filter:
-      drop-shadow(0 0 12px rgba(251, 191, 36, 0.85))
-      drop-shadow(0 0 34px rgba(251, 146, 60, 0.55));
+      drop-shadow(0 0 30px rgba(82, 246, 197, 0.50))
+      drop-shadow(0 0 80px rgba(82, 246, 197, 0.25));
   }
 }
 
