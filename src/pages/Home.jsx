@@ -64,7 +64,7 @@ export default function Home() {
             onMouseLeave={() => setHovered(false)}
             onFocus={() => setHovered(true)}
             onBlur={() => setHovered(false)}
-            aria-label={revealed ? 'BayesianSapien sigil' : 'Unravel the Sapien'}
+            aria-label={revealed ? 'BayesianSapien sigil' : 'Tap to unravel the Sapien'}
             tabIndex={revealed ? -1 : 0}
             className={[
               'group absolute left-1/2 -translate-x-1/2 -translate-y-[40%] z-[2]',
@@ -93,20 +93,22 @@ export default function Home() {
                 aria-hidden="true"
                 className="absolute pointer-events-none animate-compass-pulse"
                 style={{
-                  top: '23.5%',
+                  top: '19%',
                   left: '50%',
-                  width: '30%',
+                  width: '38%',
                   aspectRatio: '1',
                   background:
                     'radial-gradient(circle at center, ' +
-                    'rgba(251,191,36,0.65) 0%, ' +
-                    'rgba(251,191,36,0.42) 18%, ' +
-                    'rgba(251,191,36,0.22) 34%, ' +
-                    'rgba(82,246,197,0.18) 52%, ' +
-                    'rgba(82,246,197,0.08) 70%, ' +
-                    'rgba(82,246,197,0) 90%)',
+                    'rgba(255,251,235,0.92) 0%, ' +
+                    'rgba(254,243,199,0.75) 10%, ' +
+                    'rgba(251,191,36,0.62) 22%, ' +
+                    'rgba(251,146,60,0.40) 36%, ' +
+                    'rgba(180,83,9,0.22) 50%, ' +
+                    'rgba(82,246,197,0.14) 66%, ' +
+                    'rgba(82,246,197,0.05) 82%, ' +
+                    'rgba(82,246,197,0) 100%)',
                   mixBlendMode: 'screen',
-                  filter: 'blur(8px)'
+                  filter: 'blur(6px)'
                 }}
               />
             )}
@@ -123,8 +125,15 @@ export default function Home() {
             ].join(' ')}
             style={{ top: `calc(${ANCHOR_TOP} + 420px)` }}
           >
-            <span className="font-script text-4xl md:text-5xl text-emerald-200 drop-shadow-[0_0_18px_rgba(82,246,197,0.55)] tracking-wide whitespace-nowrap">
-              Unravel the Sapien
+            <span
+              className="font-script text-4xl md:text-5xl text-amber-200 tracking-wide whitespace-nowrap"
+              style={{
+                filter:
+                  'drop-shadow(0 0 12px rgba(251,191,36,0.85)) ' +
+                  'drop-shadow(0 0 32px rgba(251,146,60,0.45))'
+              }}
+            >
+              Tap to Unravel the Sapien
             </span>
           </div>
 
