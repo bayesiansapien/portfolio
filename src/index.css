@@ -42,23 +42,37 @@ body { background: #0b1220; }
 /* Allura cursive — matches the BayesianSapien wordmark inside the sigil */
 .font-script { font-family: "Allura", "Brush Script MT", cursive; }
 
-/* Breathing pulse for the compass at the top of the sigil — gentle scale +
-   opacity loop so the seal feels alive without distracting */
-@keyframes compassPulse {
+/* Gear glow — applied to the gear-only overlay PNG. Drop-shadow filter
+   radiates light from the gear's own opaque pixels, so the gear itself
+   reads as the luminous object rather than a light source behind it.
+   Stacked shadows give layered tight + diffuse halos. */
+@keyframes gearGlow {
   0%, 100% {
-    opacity: 0.55;
-    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.85;
+    filter:
+      drop-shadow(0 0 8px rgba(251, 191, 36, 0.70))
+      drop-shadow(0 0 24px rgba(251, 146, 60, 0.40));
   }
   50% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.1);
+    filter:
+      drop-shadow(0 0 16px rgba(251, 191, 36, 1.0))
+      drop-shadow(0 0 44px rgba(251, 146, 60, 0.70))
+      drop-shadow(0 0 90px rgba(251, 191, 36, 0.40));
   }
 }
-.animate-compass-pulse {
-  animation: compassPulse 2.8s ease-in-out infinite;
+.animate-gear-glow {
+  animation: gearGlow 2.8s ease-in-out infinite;
+  will-change: filter, opacity;
 }
 @media (prefers-reduced-motion: reduce) {
-  .animate-compass-pulse { animation: none; opacity: 0.85; }
+  .animate-gear-glow {
+    animation: none;
+    opacity: 0.95;
+    filter:
+      drop-shadow(0 0 12px rgba(251, 191, 36, 0.85))
+      drop-shadow(0 0 34px rgba(251, 146, 60, 0.55));
+  }
 }
 
 /* Torch-ember amber pulse on the "About me" reveal chip. Two stacked

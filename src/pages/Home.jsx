@@ -89,27 +89,12 @@ export default function Home() {
             />
 
             {!revealed && (
-              <div
+              <img
+                src="/bayesian-sigil-gear.png"
+                alt=""
                 aria-hidden="true"
-                className="absolute pointer-events-none animate-compass-pulse"
-                style={{
-                  top: '26.5%',
-                  left: '49.7%',
-                  width: '38%',
-                  aspectRatio: '1',
-                  background:
-                    'radial-gradient(circle at center, ' +
-                    'rgba(255,251,235,0.92) 0%, ' +
-                    'rgba(254,243,199,0.75) 10%, ' +
-                    'rgba(251,191,36,0.62) 22%, ' +
-                    'rgba(251,146,60,0.40) 36%, ' +
-                    'rgba(180,83,9,0.22) 50%, ' +
-                    'rgba(82,246,197,0.14) 66%, ' +
-                    'rgba(82,246,197,0.05) 82%, ' +
-                    'rgba(82,246,197,0) 100%)',
-                  mixBlendMode: 'screen',
-                  filter: 'blur(6px)'
-                }}
+                className="absolute inset-0 w-full h-full pointer-events-none select-none animate-gear-glow"
+                style={{ mixBlendMode: 'screen' }}
               />
             )}
           </button>
