@@ -84,7 +84,7 @@ export default function Home() {
                 'select-none aspect-square transition-all duration-700 ease-out',
                 revealed
                   ? 'w-[clamp(360px,75vw,820px)]'
-                  : 'w-[clamp(360px,80vw,700px)] animate-sigil-glow'
+                  : 'w-[clamp(380px,82vw,760px)] animate-sigil-glow'
               ].join(' ')}
             />
           </button>
