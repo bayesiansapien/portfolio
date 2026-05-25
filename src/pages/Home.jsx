@@ -31,12 +31,12 @@ export default function Home() {
             aria-hidden="true"
             className={[
               'pointer-events-none absolute left-1/2',
-              '-translate-x-1/2 -translate-y-[40%] z-[1]',
+              '-translate-x-1/2 -translate-y-[40%] origin-[50%_40%] z-[1]',
               'rounded-full aspect-square',
-              'transition-all duration-700 ease-out',
+              'transition-all duration-[850ms]',
               revealed
-                ? 'opacity-0 w-[clamp(440px,68vw,720px)]'
-                : 'opacity-100 w-[clamp(460px,72vw,760px)]'
+                ? 'opacity-0 scale-[0.25] w-[clamp(440px,68vw,720px)] ease-in delay-0'
+                : 'opacity-100 scale-100 w-[clamp(460px,72vw,760px)] ease-out delay-[120ms]'
             ].join(' ')}
             style={{
               top: ANCHOR_TOP,
@@ -69,24 +69,28 @@ export default function Home() {
             className={[
               'group absolute left-1/2 -translate-x-1/2 -translate-y-[40%] z-[2]',
               'flex items-center justify-center bg-transparent border-0 p-0',
-              'transition-all duration-700 ease-out',
-              revealed
-                ? 'opacity-[0.01] pointer-events-none'
-                : 'opacity-95 cursor-pointer hover:scale-[1.03]'
+              revealed ? 'pointer-events-none' : 'cursor-pointer'
             ].join(' ')}
             style={{ top: ANCHOR_TOP, mixBlendMode: 'screen' }}
           >
-            <img
-              src="/bayesian-sigil.png"
-              alt=""
-              aria-hidden="true"
+            <div
               className={[
-                'select-none aspect-square transition-all duration-700 ease-out',
+                'origin-[50%_40%] transition-all duration-[900ms]',
                 revealed
-                  ? 'w-[clamp(360px,75vw,820px)]'
-                  : 'w-[clamp(380px,82vw,760px)] animate-sigil-glow'
+                  ? 'opacity-[0.01] scale-[0.18] rotate-[720deg] ease-in delay-0'
+                  : 'opacity-95 scale-100 rotate-0 ease-out delay-[120ms] group-hover:scale-[1.03]'
               ].join(' ')}
-            />
+            >
+              <img
+                src="/bayesian-sigil.png"
+                alt=""
+                aria-hidden="true"
+                className={[
+                  'select-none aspect-square w-[clamp(380px,82vw,760px)]',
+                  revealed ? '' : 'animate-sigil-glow'
+                ].join(' ')}
+              />
+            </div>
           </button>
 
           <div
@@ -116,10 +120,10 @@ export default function Home() {
             className={[
               'absolute left-1/2 -translate-x-1/2',
               'flex justify-center items-start gap-6 w-full max-w-7xl px-4',
-              'transition-all duration-700 ease-out',
+              'transition-all duration-[700ms]',
               revealed
-                ? 'opacity-100 scale-100 pointer-events-auto'
-                : 'opacity-0 scale-[0.94] pointer-events-none'
+                ? 'opacity-100 scale-100 pointer-events-auto ease-out delay-[450ms]'
+                : 'opacity-0 scale-[0.5] pointer-events-none ease-in delay-0'
             ].join(' ')}
             style={{ top: `calc(${ANCHOR_TOP} - ${AVATAR_OFFSET}px)` }}
             aria-hidden={!revealed}
@@ -247,8 +251,8 @@ export default function Home() {
           className={[
             'transition-all duration-700 ease-out overflow-hidden',
             revealed
-              ? 'opacity-100 max-h-[5000px]'
-              : 'opacity-0 max-h-0 pointer-events-none'
+              ? 'opacity-100 max-h-[5000px] delay-[650ms]'
+              : 'opacity-0 max-h-0 pointer-events-none delay-0'
           ].join(' ')}
           aria-hidden={!revealed}
         >
@@ -260,8 +264,8 @@ export default function Home() {
         className={[
           'transition-all duration-700 ease-out overflow-hidden',
           revealed
-            ? 'opacity-100 max-h-[400px]'
-            : 'opacity-0 max-h-0 pointer-events-none'
+            ? 'opacity-100 max-h-[400px] delay-[800ms]'
+            : 'opacity-0 max-h-0 pointer-events-none delay-0'
         ].join(' ')}
         aria-hidden={!revealed}
       >
