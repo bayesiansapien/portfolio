@@ -33,10 +33,10 @@ export default function Home() {
               'pointer-events-none absolute left-1/2',
               '-translate-x-1/2 -translate-y-[40%] origin-[50%_40%] z-[1]',
               'rounded-full aspect-square',
-              'transition-all duration-[850ms]',
+              'transition-all duration-[450ms]',
               revealed
-                ? 'opacity-0 scale-[0.25] w-[clamp(440px,68vw,720px)] ease-in delay-0'
-                : 'opacity-100 scale-100 w-[clamp(460px,72vw,760px)] ease-out delay-[120ms]'
+                ? 'opacity-0 scale-[0.05] w-[clamp(440px,68vw,720px)] ease-in delay-0'
+                : 'opacity-100 scale-100 w-[clamp(460px,72vw,760px)] ease-out delay-[60ms]'
             ].join(' ')}
             style={{
               top: ANCHOR_TOP,
@@ -75,10 +75,10 @@ export default function Home() {
           >
             <div
               className={[
-                'origin-[50%_40%] transition-all duration-[900ms]',
+                'origin-[50%_40%] transition-all duration-[500ms]',
                 revealed
-                  ? 'opacity-[0.01] scale-[0.18] rotate-[720deg] ease-in delay-0'
-                  : 'opacity-95 scale-100 rotate-0 ease-out delay-[120ms] group-hover:scale-[1.03]'
+                  ? 'opacity-0 scale-[0.04] ease-in delay-0'
+                  : 'opacity-95 scale-100 ease-out delay-[60ms] group-hover:scale-[1.03]'
               ].join(' ')}
             >
               <img
@@ -120,10 +120,10 @@ export default function Home() {
             className={[
               'absolute left-1/2 -translate-x-1/2',
               'flex justify-center items-start gap-6 w-full max-w-7xl px-4',
-              'transition-all duration-[700ms]',
+              'transition-all duration-[450ms]',
               revealed
-                ? 'opacity-100 scale-100 pointer-events-auto ease-out delay-[450ms]'
-                : 'opacity-0 scale-[0.5] pointer-events-none ease-in delay-0'
+                ? 'opacity-100 scale-100 pointer-events-auto ease-out delay-[300ms]'
+                : 'opacity-0 scale-[0.6] pointer-events-none ease-in delay-0'
             ].join(' ')}
             style={{ top: `calc(${ANCHOR_TOP} - ${AVATAR_OFFSET}px)` }}
             aria-hidden={!revealed}
@@ -249,9 +249,9 @@ export default function Home() {
 
         <div
           className={[
-            'transition-all duration-700 ease-out overflow-hidden',
+            'transition-all duration-[500ms] ease-out overflow-hidden',
             revealed
-              ? 'opacity-100 max-h-[5000px] delay-[650ms]'
+              ? 'opacity-100 max-h-[5000px] delay-[450ms]'
               : 'opacity-0 max-h-0 pointer-events-none delay-0'
           ].join(' ')}
           aria-hidden={!revealed}
@@ -262,9 +262,9 @@ export default function Home() {
 
       <div
         className={[
-          'transition-all duration-700 ease-out overflow-hidden',
+          'transition-all duration-[500ms] ease-out overflow-hidden',
           revealed
-            ? 'opacity-100 max-h-[400px] delay-[800ms]'
+            ? 'opacity-100 max-h-[400px] delay-[550ms]'
             : 'opacity-0 max-h-0 pointer-events-none delay-0'
         ].join(' ')}
         aria-hidden={!revealed}
