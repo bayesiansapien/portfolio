@@ -14,6 +14,20 @@ export default function Home() {
     return () => window.removeEventListener('keydown', onKey);
   }, [revealed]);
 
+  useEffect(() => {
+    // Touch-only devices never fire mouseenter, so the cursive hint would
+    // stay hidden forever. Pin hovered = true on devices that report no
+    // hover capability so the hint is visible by default until the bio is
+    // revealed. Never flips back to false from this effect (desktop hover
+    // state is owned by the mouse handlers on the sigil button).
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia('(hover: none)');
+    const sync = () => { if (mq.matches) setHovered(true); };
+    sync();
+    mq.addEventListener?.('change', sync);
+    return () => mq.removeEventListener?.('change', sync);
+  }, []);
+
   // Anchor point inside the section where the sigil's circular composition
   // center AND the bubble's avatar center both align. 38% (vs 50%) lifts the
   // whole composition into the upper-middle of the viewport.
@@ -96,10 +110,10 @@ export default function Home() {
                 ? 'opacity-100 translate-y-0'
                 : 'opacity-0 translate-y-3'
             ].join(' ')}
-            style={{ top: `calc(${ANCHOR_TOP} + 420px)` }}
+            style={{ top: `calc(${ANCHOR_TOP} + clamp(260px, 56vw, 420px))` }}
           >
             <span
-              className="font-script text-4xl md:text-5xl text-amber-200 tracking-wide whitespace-nowrap"
+              className="font-script text-[28px] sm:text-3xl md:text-4xl lg:text-5xl text-amber-200 tracking-wide whitespace-nowrap"
               style={{
                 filter:
                   'drop-shadow(0 0 12px rgba(251,191,36,0.85)) ' +
