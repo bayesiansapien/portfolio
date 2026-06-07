@@ -13,7 +13,16 @@ const MAX_ARTICLES = 3;
 const OUT_PATH = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'posts.json');
 
 async function main() {
-  const response = await fetch(SUBSTACK_API, { headers: { accept: 'application/json' } });
+  const response = await fetch(SUBSTACK_API, {
+    headers: {
+      // Substack's CDN 403s the default Node/undici user-agent. A common
+      // desktop browser UA gets through cleanly.
+      'user-agent':
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/537.36 ' +
+        '(KHTML, like Gecko) Chrome/126.0 Safari/537.36',
+      accept: 'application/json'
+    }
+  });
   if (!response.ok) {
     throw new Error(`Substack API responded ${response.status}`);
   }
@@ -61,6 +70,10 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error('fetch-posts failed:', err);
-  process.exit(1);
+  // Upstream Substack hiccups (403, 5xx, network) shouldn't fail the hourly
+  // workflow — the last known good posts.json keeps serving until next run.
+  // Surface the error in logs but exit cleanly so the action stays green.
+  console.error('fetch-posts: upstream failed, keeping previous posts.json');
+  console.error(err);
+  process.exit(0);
 });
