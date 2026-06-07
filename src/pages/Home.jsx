@@ -28,10 +28,11 @@ export default function Home() {
     return () => mq.removeEventListener?.('change', sync);
   }, []);
 
-  // Anchor point inside the section where the sigil's circular composition
-  // center AND the bubble's avatar center both align. 38% (vs 50%) lifts the
-  // whole composition into the upper-middle of the viewport.
-  const ANCHOR_TOP = '38%';
+  // Anchor where the sigil's circular composition center AND the bubble's
+  // avatar center both align. Viewport-relative (vh) instead of section-%
+  // so the sigil stays put when the section grows to accommodate the bubble
+  // on reveal. 38vh lifts the seal into the upper-middle of the viewport.
+  const ANCHOR_TOP = '38vh';
   // Bubble padding-top + half the avatar's height. Used to offset the bubble
   // upward so the avatar's center lands on the anchor.
   const AVATAR_OFFSET = 100;
@@ -39,7 +40,20 @@ export default function Home() {
   return (
     <>
       <main className="max-w-none mx-auto px-4 pt-4 pb-16">
-        <section className="relative grid justify-center pb-12 min-h-[860px] md:min-h-[900px]">
+        <section
+          className={[
+            'relative grid justify-center pb-12',
+            'transition-[min-height] duration-700 ease-out',
+            // Bubble's natural height varies a lot by viewport width: bio
+            // paragraph wraps to ~16 lines on a 375px phone vs ~5 lines on
+            // desktop, so when revealed we need a much taller section on
+            // narrow viewports to keep the bubble from overlapping the
+            // "Recent Notes" header below.
+            revealed
+              ? 'min-h-[1240px] sm:min-h-[1080px] md:min-h-[980px] lg:min-h-[900px]'
+              : 'min-h-[620px] sm:min-h-[720px] md:min-h-[860px]'
+          ].join(' ')}
+        >
 
           <div
             aria-hidden="true"
@@ -49,8 +63,8 @@ export default function Home() {
               'rounded-full aspect-square',
               'transition-all duration-700 ease-out',
               revealed
-                ? 'opacity-0 w-[clamp(440px,68vw,720px)]'
-                : 'opacity-100 w-[clamp(460px,72vw,760px)]'
+                ? 'opacity-0 w-[clamp(280px,68vw,720px)]'
+                : 'opacity-100 w-[clamp(300px,72vw,760px)]'
             ].join(' ')}
             style={{
               top: ANCHOR_TOP,
