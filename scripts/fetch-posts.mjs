@@ -8,43 +8,40 @@ import { writeFile, readFile } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const SUBSTACK_API = 'https://bayesiansapien.substack.com/api/v1/posts?limit=25';
+const RSS_URL = 'https://bayesiansapien.substack.com/feed';
 const MAX_ARTICLES = 3;
 const OUT_PATH = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'posts.json');
+const BROWSER_UA =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/537.36 ' +
+  '(KHTML, like Gecko) Chrome/126.0 Safari/537.36';
 
 async function main() {
-  const response = await fetch(SUBSTACK_API, {
+  const response = await fetch(RSS_URL, {
     headers: {
-      // Substack's CDN 403s the default Node/undici user-agent. A common
-      // desktop browser UA gets through cleanly.
-      'user-agent':
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/537.36 ' +
-        '(KHTML, like Gecko) Chrome/126.0 Safari/537.36',
-      accept: 'application/json'
+      'user-agent': BROWSER_UA,
+      accept: 'application/rss+xml, application/xml;q=0.9, text/xml;q=0.8'
     }
   });
   if (!response.ok) {
-    throw new Error(`Substack API responded ${response.status}`);
+    throw new Error(`Substack RSS responded ${response.status}`);
   }
 
-  const items = await response.json();
-  if (!Array.isArray(items)) {
-    throw new Error('Unexpected Substack response shape');
-  }
+  const xml = await response.text();
+  const items = parseRssItems(xml);
 
   const articles = items
-    .filter((p) => p && p.type === 'newsletter')
+    .filter((item) => !(item.enclosureType || '').startsWith('audio/'))
     .slice(0, MAX_ARTICLES)
-    .map((p) => ({
-      title: p.title,
-      link: p.canonical_url,
-      date: p.post_date,
-      description: p.description || p.subtitle || '',
-      thumbnail: p.cover_image || p.cover_image_url || null
+    .map((item) => ({
+      title: item.title,
+      link: item.link,
+      date: item.pubDate ? new Date(item.pubDate).toISOString() : null,
+      description: item.description.slice(0, 320),
+      thumbnail: item.thumbnail
     }));
 
   if (articles.length === 0) {
-    throw new Error('No newsletter articles in the latest 25 Substack items');
+    throw new Error('No newsletter articles in the Substack RSS feed');
   }
 
   const payload = { generated_at: new Date().toISOString(), articles };
@@ -67,6 +64,74 @@ async function main() {
 
   await writeFile(OUT_PATH, serialized, 'utf8');
   console.log(`posts.json: wrote ${articles.length} articles`);
+}
+
+function parseRssItems(xml) {
+  const items = [];
+  const itemRegex = /<item\b[^>]*>([\s\S]*?)<\/item>/g;
+  let match;
+  while ((match = itemRegex.exec(xml)) !== null) {
+    items.push(parseItem(match[1]));
+  }
+  return items;
+}
+
+function parseItem(block) {
+  const title = unwrap(extractTag(block, 'title'));
+  const link = unwrap(extractTag(block, 'link'));
+  const pubDate = unwrap(extractTag(block, 'pubDate'));
+  const descriptionHtml = unwrap(extractTag(block, 'description'));
+  const contentHtml = unwrap(extractTag(block, 'content:encoded')) || descriptionHtml;
+  const enclosureType = extractAttr(block, 'enclosure', 'type');
+
+  return {
+    title,
+    link,
+    pubDate,
+    description: stripHtml(descriptionHtml).trim(),
+    enclosureType,
+    thumbnail: extractFirstImage(contentHtml)
+  };
+}
+
+function extractTag(block, tagName) {
+  const escaped = tagName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(`<${escaped}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${escaped}>`, 'i');
+  const m = block.match(re);
+  return m ? m[1] : '';
+}
+
+function extractAttr(block, tagName, attrName) {
+  const re = new RegExp(
+    `<${tagName}\\b[^>]*\\b${attrName}=["']([^"']*)["']`,
+    'i'
+  );
+  const m = block.match(re);
+  return m ? m[1] : '';
+}
+
+function unwrap(text) {
+  return text
+    .replace(/^\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*$/, '$1')
+    .trim();
+}
+
+function stripHtml(html) {
+  return html
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ');
+}
+
+function extractFirstImage(html) {
+  if (!html) return null;
+  const m = html.match(/<img\b[^>]*\bsrc=["']([^"']+)["']/i);
+  return m ? m[1] : null;
 }
 
 main().catch((err) => {
