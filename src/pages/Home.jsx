@@ -184,7 +184,7 @@ export default function Home() {
     const measure = () => {
       const sec = section.getBoundingClientRect();
       const bottom = sigil.getBoundingClientRect().bottom - sec.top;
-      const gap = Math.min(145, Math.max(48, Math.min(window.innerWidth * 0.11, window.innerHeight * 0.18)));
+      const gap = Math.min(128, Math.max(44, Math.min(window.innerWidth * 0.1, window.innerHeight * 0.16)));
       // Never let the hint slip below the fold on short screens
       const textH = hintTextRef.current?.offsetHeight || 48;
       const limit = window.innerHeight - 12 - sec.top - window.scrollY - textH;
@@ -261,18 +261,14 @@ export default function Home() {
               'flex items-center justify-center bg-transparent border-0 p-0',
               'transition-all duration-700 ease-out',
               revealed
-                // Squished into the singularity, swirling clockwise with the
-                // galaxy and accelerating as it falls in
-                ? 'opacity-0 scale-[0.02] rotate-[140deg] pointer-events-none'
+                // A plain fade while the galaxy collapses behind it
+                ? 'opacity-[0.01] pointer-events-none'
                 : 'opacity-95 cursor-pointer hover:scale-[1.03]'
             ].join(' ')}
             style={{
               top: ANCHOR_TOP,
               mixBlendMode: 'screen',
-              ...(revealed && !REDUCED_MOTION
-                ? { transition: `scale 700ms ${SUCK}, rotate 700ms ${SUCK}, opacity 250ms ease-in 450ms` }
-                : null),
-              // On close it's born back out of the bang, unwinding the other way
+              // On close it fades back in with the bang
               ...(closing && !REDUCED_MOTION ? { transitionDelay: '600ms' } : null)
             }}
           >
