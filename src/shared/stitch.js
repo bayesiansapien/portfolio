@@ -3,7 +3,12 @@
 // in from a scattered offset and locks into place. Offsets are seeded by
 // index so they stay put across renders. `extra` delays a piece further so
 // the page assembles top to bottom.
-export const BANG_MS = 750;
+// Must match the open timing in public/bg.js: collapse 0.75s + hold 0.7s.
+export const BANG_MS = 1450;
+
+// Reduced-motion visitors get no warp, so pieces just fade in place.
+export const REDUCED_MOTION =
+  typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 function scatter(i) {
   const r = (n) => {
@@ -14,6 +19,7 @@ function scatter(i) {
 }
 
 export function stitch(i, revealed, extra = 0) {
+  if (REDUCED_MOTION) return { opacity: revealed ? 1 : 0, transition: 'opacity 300ms ease-out' };
   const { dx, dy, rot, jitter } = scatter(i);
   if (revealed) {
     const delay = BANG_MS + 80 + extra + jitter * 450;

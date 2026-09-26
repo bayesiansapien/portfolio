@@ -1,7 +1,7 @@
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import RecentBlogPosts from '../components/RecentBlogPosts';
 import Footer from '../components/Footer';
-import { stitch } from '../shared/stitch';
+import { stitch, REDUCED_MOTION } from '../shared/stitch';
 import Stitched from '../shared/Stitched';
 
 // bg.js bends the background into a wormhole through the seal's center;
@@ -21,19 +21,29 @@ export default function Home() {
   // before re-emerging on this side.
   const [closing, setClosing] = useState(false);
   const closingTimer = useRef(null);
+  // Ignore taps while a transition is in flight: the seal and the card stay
+  // clickable while invisible, and a mid-flight tap would tangle open/close.
+  const busyUntil = useRef(0);
+  const claim = (ms) => {
+    const now = Date.now();
+    if (now < busyUntil.current) return false;
+    busyUntil.current = now + (REDUCED_MOTION ? 400 : ms);
+    return true;
+  };
   const reveal = () => {
-    if (revealed) return;
+    if (revealed || !claim(2300)) return;
     emitWarp(1, sigilRef.current);
     setRevealed(true);
   };
   const scrollTimer = useRef(null);
   const close = () => {
+    if (!claim(2600)) return;
     const collapse = () => {
       emitWarp(-1, sigilRef.current);
       setRevealed(false);
       setClosing(true);
       clearTimeout(closingTimer.current);
-      closingTimer.current = setTimeout(() => setClosing(false), 1400);
+      closingTimer.current = setTimeout(() => setClosing(false), 2200);
     };
     // The collapse happens at the seal, so bring it back into view first
     clearTimeout(scrollTimer.current);
@@ -232,7 +242,8 @@ export default function Home() {
               revealed
                 // The seal falls into the wormhole's throat
                 ? 'opacity-[0.01] scale-[0.35] pointer-events-none'
-                : 'opacity-95 cursor-pointer hover:scale-[1.03]' + (closing ? ' delay-[600ms]' : '')
+                // On close the seal waits out the collapse and the passage
+                : 'opacity-95 cursor-pointer hover:scale-[1.03]' + (closing && !REDUCED_MOTION ? ' delay-[1250ms]' : '')
             ].join(' ')}
             style={{ top: ANCHOR_TOP, mixBlendMode: 'screen' }}
           >
@@ -293,7 +304,7 @@ export default function Home() {
               revealed
                 // Born in the big bang: bursts out of the singularity once the
                 // collapse is done
-                ? 'opacity-100 scale-100 rotate-0 pointer-events-auto delay-[700ms]'
+                ? 'opacity-100 scale-100 rotate-0 pointer-events-auto ' + (REDUCED_MOTION ? '' : 'delay-[1400ms]')
                 : closing
                   // Sucked into the seal: swirling anticlockwise (the reverse of
                   // the clockwise opening) and accelerating inward
@@ -467,7 +478,7 @@ export default function Home() {
           className={[
             'transition-all duration-700 ease-out overflow-hidden',
             revealed
-              ? 'opacity-100 max-h-[5000px] delay-[700ms]'
+              ? 'opacity-100 max-h-[5000px] ' + (REDUCED_MOTION ? '' : 'delay-[1400ms]')
               : 'opacity-0 max-h-0 pointer-events-none'
           ].join(' ')}
           aria-hidden={!revealed}
@@ -480,7 +491,7 @@ export default function Home() {
         className={[
           'transition-all duration-700 ease-out overflow-hidden',
           revealed
-            ? 'opacity-100 max-h-[400px] delay-[700ms]'
+            ? 'opacity-100 max-h-[400px] ' + (REDUCED_MOTION ? '' : 'delay-[1400ms]')
             : 'opacity-0 max-h-0 pointer-events-none'
         ].join(' ')}
         aria-hidden={!revealed}
