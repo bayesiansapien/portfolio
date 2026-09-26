@@ -4,13 +4,18 @@ import Footer from '../components/Footer';
 import { stitch, REDUCED_MOTION } from '../shared/stitch';
 import Stitched from '../shared/Stitched';
 
-// bg.js bends the background into a wormhole through the seal's center;
+// bg.js collapses the galaxy into the seal's center and bangs it back out;
 // dir 1 opens, -1 closes.
 function emitWarp(dir, sigil) {
   const r = sigil?.getBoundingClientRect();
   const detail = r && r.width ? { dir, x: r.left + r.width / 2, y: r.top + r.height / 2 } : { dir };
   window.dispatchEvent(new CustomEvent('cosmic:warp', { detail }));
 }
+
+// Ease-in used for everything being pulled into the singularity: slow at
+// first, then accelerating as it falls in.
+const SUCK = 'cubic-bezier(0.55, 0, 1, 0.45)';
+const SUCK_OUT = `scale 650ms ${SUCK}, rotate 650ms ${SUCK}, opacity 300ms ease-in 350ms`;
 
 export default function Home() {
   const [revealed, setRevealed] = useState(false);
@@ -31,19 +36,35 @@ export default function Home() {
     return true;
   };
   const reveal = () => {
-    if (revealed || !claim(2150)) return;
+    if (revealed || !claim(1700)) return;
     emitWarp(1, sigilRef.current);
     setRevealed(true);
   };
   const scrollTimer = useRef(null);
+  const postsRef = useRef(null);
+  const footerRef = useRef(null);
+  const [suckOrigins, setSuckOrigins] = useState({ posts: '50% 0', footer: '50% 0' });
   const close = () => {
-    if (!claim(2450)) return;
+    if (!claim(1950)) return;
     const collapse = () => {
+      // Aim the posts and footer at the seal too, so the whole page gets
+      // pulled into the same point as the card
+      const sr = sigilRef.current?.getBoundingClientRect();
+      if (sr) {
+        const px = sr.left + sr.width / 2;
+        const py = sr.top + sr.height / 2;
+        const aim = (el) => {
+          if (!el) return '50% 50%';
+          const r = el.getBoundingClientRect();
+          return `${Math.round(px - r.left)}px ${Math.round(py - r.top)}px`;
+        };
+        setSuckOrigins({ posts: aim(postsRef.current), footer: aim(footerRef.current) });
+      }
       emitWarp(-1, sigilRef.current);
       setRevealed(false);
       setClosing(true);
       clearTimeout(closingTimer.current);
-      closingTimer.current = setTimeout(() => setClosing(false), 2000);
+      closingTimer.current = setTimeout(() => setClosing(false), 1400);
     };
     // The collapse happens at the seal, so bring it back into view first
     clearTimeout(scrollTimer.current);
@@ -240,12 +261,20 @@ export default function Home() {
               'flex items-center justify-center bg-transparent border-0 p-0',
               'transition-all duration-700 ease-out',
               revealed
-                // The seal falls into the wormhole's throat
-                ? 'opacity-[0.01] scale-[0.35] pointer-events-none'
-                // On close the seal waits out the collapse and the passage
-                : 'opacity-95 cursor-pointer hover:scale-[1.03]' + (closing && !REDUCED_MOTION ? ' delay-[1150ms]' : '')
+                // Squished into the singularity, swirling clockwise with the
+                // galaxy and accelerating as it falls in
+                ? 'opacity-0 scale-[0.02] rotate-[140deg] pointer-events-none'
+                : 'opacity-95 cursor-pointer hover:scale-[1.03]'
             ].join(' ')}
-            style={{ top: ANCHOR_TOP, mixBlendMode: 'screen' }}
+            style={{
+              top: ANCHOR_TOP,
+              mixBlendMode: 'screen',
+              ...(revealed && !REDUCED_MOTION
+                ? { transition: `scale 700ms ${SUCK}, rotate 700ms ${SUCK}, opacity 250ms ease-in 450ms` }
+                : null),
+              // On close it's born back out of the bang, unwinding the other way
+              ...(closing && !REDUCED_MOTION ? { transitionDelay: '600ms' } : null)
+            }}
           >
             <img
               ref={sigilRef}
@@ -304,7 +333,7 @@ export default function Home() {
               revealed
                 // Born in the big bang: bursts out of the singularity once the
                 // collapse is done
-                ? 'opacity-100 scale-100 rotate-0 pointer-events-auto ' + (REDUCED_MOTION ? '' : 'delay-[1200ms]')
+                ? 'opacity-100 scale-100 rotate-0 pointer-events-auto ' + (REDUCED_MOTION ? '' : 'delay-[700ms]')
                 : closing
                   // Sucked into the seal: swirling anticlockwise (the reverse of
                   // the clockwise opening) and accelerating inward
@@ -316,9 +345,7 @@ export default function Home() {
               // grow out of and collapse into
               top: `clamp(${REVEALED_TOP_MIN}px, 6vh, ${REVEALED_TOP_MAX}px)`,
               transformOrigin: origin,
-              ...(closing && !revealed
-                ? { transitionDuration: '650ms', transitionTimingFunction: 'cubic-bezier(0.55, 0, 1, 0.45)' }
-                : null)
+              ...(closing && !revealed && !REDUCED_MOTION ? { transition: SUCK_OUT } : null)
             }}
             aria-hidden={!revealed}
           >
@@ -474,13 +501,23 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Posts and footer get pulled into the seal on close as well; they
+            keep their height until the swirl finishes, then collapse. z-index
+            keeps them above bg.js's canvas while transformed. */}
         <div
+          ref={postsRef}
           className={[
-            'transition-all duration-700 ease-out overflow-hidden',
+            'relative z-10 transition-all duration-700 ease-out overflow-hidden',
             revealed
-              ? 'opacity-100 max-h-[5000px] ' + (REDUCED_MOTION ? '' : 'delay-[1200ms]')
-              : 'opacity-0 max-h-0 pointer-events-none'
+              ? 'opacity-100 max-h-[5000px] ' + (REDUCED_MOTION ? '' : 'delay-[700ms]')
+              : closing
+                ? 'opacity-0 max-h-[5000px] scale-[0.02] -rotate-[140deg] pointer-events-none'
+                : 'opacity-0 max-h-0 pointer-events-none'
           ].join(' ')}
+          style={{
+            transformOrigin: suckOrigins.posts,
+            ...(closing && !revealed && !REDUCED_MOTION ? { transition: SUCK_OUT } : null)
+          }}
           aria-hidden={!revealed}
         >
           <RecentBlogPosts revealed={revealed} />
@@ -488,12 +525,19 @@ export default function Home() {
       </main>
 
       <div
+        ref={footerRef}
         className={[
-          'transition-all duration-700 ease-out overflow-hidden',
+          'relative z-20 transition-all duration-700 ease-out overflow-hidden',
           revealed
-            ? 'opacity-100 max-h-[400px] ' + (REDUCED_MOTION ? '' : 'delay-[1200ms]')
-            : 'opacity-0 max-h-0 pointer-events-none'
+            ? 'opacity-100 max-h-[400px] ' + (REDUCED_MOTION ? '' : 'delay-[700ms]')
+            : closing
+              ? 'opacity-0 max-h-[400px] scale-[0.02] -rotate-[140deg] pointer-events-none'
+              : 'opacity-0 max-h-0 pointer-events-none'
         ].join(' ')}
+        style={{
+          transformOrigin: suckOrigins.footer,
+          ...(closing && !revealed && !REDUCED_MOTION ? { transition: SUCK_OUT } : null)
+        }}
         aria-hidden={!revealed}
       >
         <Footer revealed={revealed} />

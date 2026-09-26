@@ -51,22 +51,16 @@
   let isInitialized = false, animationId = null, timerId = null;
   let lastTime = 0, t = 0, skyAngle = 0;
 
-  // Collapse, swirl and expansion, triggered from Home.jsx via a
-  // "cosmic:warp" event. The whole galaxy spirals down into a singularity at
-  // the seal, spins there as a tight vortex for half a second, then swirls
-  // back out. Durations are in seconds and mirrored in src/shared/stitch.js
-  // and Home.jsx.
+  // Collapse and big bang, triggered from Home.jsx via a "cosmic:warp" event.
+  // Until BANG, space spirals into a singularity at the seal and the sky
+  // darkens; at BANG it bursts back out, fast at first and then settling.
   let warp = null;
-  const TIMING = {
-    open: { collapse: 0.75, hold: 0.5, expand: 0.9 },
-    close: { collapse: 0.65, hold: 0.5, expand: 0.8 }
-  };
-  const PULL = 0.93;          // at the end of the collapse: a small vortex remains
-  const PULL_HOLD = 0.95;     // tightening further while it spins
+  const WARP_OPEN = 1.6;
+  const WARP_CLOSE = 1.4;
+  const BANG = 0.47;          // fraction of the transition spent collapsing
+  const PULL = 0.985;
   const TWIST = 2.4;
-  const HOLD_SPIN = 7;        // rad/s the crushed galaxy spins during the hold
-  let pull = 0, twist = 0, envelope = 0, ringFlow = 0;
-  let stage = "", stageP = 0;
+  let pull = 0, twist = 0, envelope = 0, ringFlow = 0, phase = 0;
   let bx = 0, by = 0;
 
   const rand = (a, b) => a + Math.random() * (b - a);
@@ -275,47 +269,31 @@
 
   function updateWarp(dt) {
     pull = twist = envelope = 0;
-    stage = "";
     if (!warp) return;
-    const { collapse, hold, expand } = warp.timing;
-    const el = t - warp.start;
-    if (el >= collapse + hold + expand) {
+    const p = (t - warp.start) / warp.duration;
+    if (p >= 1) {
       warp = null;
       return;
     }
-    if (el < collapse) {
-      stage = "collapse";
-      stageP = el / collapse;
-      const q = easeIn(stageP);
+    phase = p;
+    if (p < BANG) {
+      const q = easeIn(p / BANG);
       envelope = q;
       pull = PULL * q;
       twist = TWIST * q * warp.spin;
       ringFlow -= dt * 1.1;     // fabric rings drawn into the point
-    } else if (el < collapse + hold) {
-      // The black hole swirl: the crushed galaxy keeps tightening and spins
-      // faster and faster in the same direction it fell in
-      stage = "hold";
-      stageP = (el - collapse) / hold;
-      envelope = 1;
-      pull = PULL + (PULL_HOLD - PULL) * stageP;
-      warp.holdSpin += dt * HOLD_SPIN * (0.4 + stageP);
-      twist = (TWIST + warp.holdSpin) * warp.spin;
-      warp.twistAtBang = twist;
-      ringFlow -= dt * 1.4;
     } else {
-      // Swirls back out: explosive at first, then settling into place
-      stage = "expand";
-      stageP = (el - collapse - hold) / expand;
-      const q = 1 - easeOutQuint(stageP);
+      // Explosive at first, then settling back into place
+      const q = 1 - easeOutQuint((p - BANG) / (1 - BANG));
       envelope = q;
-      pull = PULL_HOLD * q;
-      twist = (warp.twistAtBang || TWIST * warp.spin) * q;
-      ringFlow += dt * 1.6;     // and flung outward
+      pull = PULL * q;
+      twist = TWIST * 0.25 * q * warp.spin; // expands outward rather than unwinding
+      ringFlow += dt * 1.6;     // and flung outward by the bang
     }
   }
 
   // Space-time fabric rings flowing into the point (collapse) and out of it
-  // (expansion), a darkening sky, the singularity, and the bang.
+  // (expansion), a darkening sky, the singularity itself, and the bang.
   function drawCollapse() {
     const maxR = Math.hypot(W, H);
     const n = 9;
@@ -339,12 +317,11 @@
       ctx.fillRect(0, 0, W, H);
     }
 
-
     ctx.globalCompositeOperation = "lighter";
-    // The singularity: a pinpoint at the heart of the vortex that tightens
-    // and brightens as space falls in and holds while it spins
-    if (stage === "collapse" || stage === "hold") {
-      const s = stage === "hold" ? 0.45 : 0.45 * easeIn(stageP);
+    // The singularity: a pinpoint that tightens and brightens just before
+    // the bang, then burns off as space expands
+    const s = phase < BANG ? easeIn(phase / BANG) : Math.max(0, 1 - (phase - BANG) / 0.12);
+    if (s > 0.02) {
       const pr = 3 + 5 * s;
       const core = ctx.createRadialGradient(warp.x, warp.y, 0, warp.x, warp.y, pr * 4);
       core.addColorStop(0, rgba(WHITE, 0.95 * s));
@@ -354,8 +331,8 @@
       ctx.fillRect(warp.x - pr * 4, warp.y - pr * 4, pr * 8, pr * 8);
     }
     // The bang: a soft bloom and a thin wavefront racing outward
-    if (stage === "expand") {
-      const b = stageP;
+    if (phase >= BANG) {
+      const b = (phase - BANG) / (1 - BANG);
       const bloomR = Math.min(W, H) * (0.08 + 0.4 * easeOut(Math.min(1, b / 0.35)));
       const bloomA = Math.max(0, 1 - b / 0.35);
       if (bloomA > 0) {
@@ -388,9 +365,7 @@
       // Opening spirals clockwise (positive angle, y pointing down);
       // closing winds the other way
       spin: d.dir < 0 ? -1 : 1,
-      timing: d.dir < 0 ? TIMING.close : TIMING.open,
-      holdSpin: 0,
-      twistAtBang: 0,
+      duration: d.dir < 0 ? WARP_CLOSE : WARP_OPEN,
       x: onScreen ? d.x : cx,
       y: onScreen ? d.y : cy
     };
@@ -454,10 +429,6 @@
       ctx.drawImage(nebula, 0, 0, W, H);
     }
 
-    // Stars shrink with the space they sit in, so the crushed galaxy keeps its
-    // spiral structure instead of fusing into a blob
-    const shrink = 1 - 0.6 * (pull / PULL_HOLD);
-
     // Far starfield: batched into one path per colour/alpha bucket
     const cosS = Math.cos(skyAngle);
     const sinS = Math.sin(skyAngle);
@@ -466,9 +437,8 @@
       for (const s of bucket.stars) {
         bend(cx + s.x * cosS - s.y * sinS, cy + s.x * sinS + s.y * cosS);
         if (bx < -2 || bx > W + 2 || by < -2 || by > H + 2) continue;
-        const r = s.r * shrink;
-        ctx.moveTo(bx + r, by);
-        ctx.arc(bx, by, r, 0, Math.PI * 2);
+        ctx.moveTo(bx + s.r, by);
+        ctx.arc(bx, by, s.r, 0, Math.PI * 2);
       }
       ctx.fillStyle = rgba(bucket.color, bucket.alpha);
       ctx.fill();
@@ -478,7 +448,7 @@
       bend(cx + s.x * cosS - s.y * sinS, cy + s.x * sinS + s.y * cosS);
       if (bx < -10 || bx > W + 10 || by < -10 || by > H + 10) continue;
       const a = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * s.speed + s.phase));
-      const size = s.size * 4 * config.starScale * shrink;
+      const size = s.size * 4 * config.starScale;
       ctx.globalAlpha = a * 0.9;
       ctx.drawImage(sprites.get(s.color), bx - size / 2, by - size / 2, size, size);
     }
@@ -495,7 +465,7 @@
       bend(cx + dx * cosP - dy * sinP, cy + dx * sinP + dy * cosP);
       if (bx < -20 || bx > W + 20 || by < -20 || by > H + 20) continue;
       const pulse = 0.5 + 0.5 * Math.sin(t * s.pulse + s.phase);
-      const size = (s.size + pulse * 0.5) * 4.5 * config.starScale * shrink;
+      const size = (s.size + pulse * 0.5) * 4.5 * config.starScale;
       ctx.globalAlpha = Math.min(1, s.brightness * (0.75 + 0.25 * pulse));
       ctx.drawImage(sprites.get(s.color), bx - size / 2, by - size / 2, size, size);
     }

@@ -3,8 +3,8 @@
 // in from a scattered offset and locks into place. Offsets are seeded by
 // index so they stay put across renders. `extra` delays a piece further so
 // the page assembles top to bottom.
-// Must match the open timing in public/bg.js: collapse 0.75s + hold 0.5s.
-export const BANG_MS = 1250;
+// Must match public/bg.js: BANG (0.47) x WARP_OPEN (1.6s).
+export const BANG_MS = 750;
 
 // Reduced-motion visitors get no warp, so pieces just fade in place.
 export const REDUCED_MOTION =
