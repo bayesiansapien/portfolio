@@ -50,7 +50,7 @@ export default function Home() {
             // narrow viewports to keep the bubble from overlapping the
             // "Recent Notes" header below.
             revealed
-              ? 'min-h-[1240px] sm:min-h-[1080px] md:min-h-[980px] lg:min-h-[900px]'
+              ? 'min-h-[1380px] sm:min-h-[1136px] md:min-h-[1036px] lg:min-h-[956px]'
               : 'min-h-[620px] sm:min-h-[720px] md:min-h-[860px]'
           ].join(' ')}
         >
@@ -179,7 +179,7 @@ export default function Home() {
               </h1>
 
               <p className="mx-auto max-w-[1200px] lg:max-w-[1240px] text-[16px] md:text-[17px] lg:text-[14px] md:text-[15px] lg:text-[16px] tracking-[0.005em] leading-7 md:leading-7 lg:leading-7">
-                A Minimalist Bayesian Sapien contributing to the universe's entropy, being an AI researcher building efficient, sustainable intelligence optimizing models via pruning, distillation, quantization, and routing to deliver lighter and faster systems. I also apply Quantum ML to combinatorial optimization, turning vast search spaces into practical results. My work spans RL, test time compute, Agentic Intelligence Optimization, and reasoning systems.
+                A Minimalist Bayesian Sapien, adding to the universe's entropy while playing Maxwell's demon for machine intelligence, sorting signal from heat. I'm a research-to-product lead working on the expensive half of intelligence, the serving systems, routing infrastructure, compression and quantization that I tune until every token earns its keep. I think hardware-first, from GPU kernels and memory hierarchies up to agentic intelligence optimization and test-time compute, teaching models how hard to think before they spend. What I'm after is AI that is reliable, fast and cheap enough to disappear into the product.
               </p>
 
               <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center items-center">
