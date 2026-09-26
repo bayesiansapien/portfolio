@@ -51,21 +51,22 @@
   let isInitialized = false, animationId = null, timerId = null;
   let lastTime = 0, t = 0, skyAngle = 0;
 
-  // Collapse, passage and big bang, triggered from Home.jsx via a
-  // "cosmic:warp" event. Space spirals into a singularity at the seal, we hang
-  // inside the black hole for a moment (accretion disc, light rushing past),
-  // then it bursts back out, fast at first and then settling. Durations are
-  // in seconds and mirrored in src/shared/stitch.js and Home.jsx.
+  // Collapse, swirl and expansion, triggered from Home.jsx via a
+  // "cosmic:warp" event. The whole galaxy spirals down into a singularity at
+  // the seal, spins there as a tight vortex for half a second, then swirls
+  // back out. Durations are in seconds and mirrored in src/shared/stitch.js
+  // and Home.jsx.
   let warp = null;
   const TIMING = {
-    open: { collapse: 0.75, hold: 0.7, expand: 0.9 },
-    close: { collapse: 0.65, hold: 0.6, expand: 0.8 }
+    open: { collapse: 0.75, hold: 0.5, expand: 0.9 },
+    close: { collapse: 0.65, hold: 0.5, expand: 0.8 }
   };
-  const PULL = 0.985;
+  const PULL = 0.93;          // at the end of the collapse: a small vortex remains
+  const PULL_HOLD = 0.95;     // tightening further while it spins
   const TWIST = 2.4;
+  const HOLD_SPIN = 7;        // rad/s the crushed galaxy spins during the hold
   let pull = 0, twist = 0, envelope = 0, ringFlow = 0;
-  let stage = "", stageP = 0, hole = 0;
-  let streaks = [];
+  let stage = "", stageP = 0;
   let bx = 0, by = 0;
 
   const rand = (a, b) => a + Math.random() * (b - a);
@@ -273,7 +274,7 @@
   }
 
   function updateWarp(dt) {
-    pull = twist = envelope = hole = 0;
+    pull = twist = envelope = 0;
     stage = "";
     if (!warp) return;
     const { collapse, hold, expand } = warp.timing;
@@ -290,134 +291,36 @@
       pull = PULL * q;
       twist = TWIST * q * warp.spin;
       ringFlow -= dt * 1.1;     // fabric rings drawn into the point
-      hole = Math.max(0, (stageP - 0.7) / 0.3);
     } else if (el < collapse + hold) {
-      // Inside: everything stays crushed into the point while the black
-      // hole swirls and light streams past
+      // The black hole swirl: the crushed galaxy keeps tightening and spins
+      // faster and faster in the same direction it fell in
       stage = "hold";
       stageP = (el - collapse) / hold;
       envelope = 1;
-      pull = PULL;
-      twist = TWIST * warp.spin;
-      hole = 1;
+      pull = PULL + (PULL_HOLD - PULL) * stageP;
+      warp.holdSpin += dt * HOLD_SPIN * (0.4 + stageP);
+      twist = (TWIST + warp.holdSpin) * warp.spin;
+      warp.twistAtBang = twist;
+      ringFlow -= dt * 1.4;
     } else {
-      // Explosive at first, then settling back into place
+      // Swirls back out: explosive at first, then settling into place
       stage = "expand";
       stageP = (el - collapse - hold) / expand;
       const q = 1 - easeOutQuint(stageP);
       envelope = q;
-      pull = PULL * q;
-      twist = TWIST * 0.25 * q * warp.spin; // expands outward rather than unwinding
-      ringFlow += dt * 1.6;     // and flung outward by the bang
-      hole = Math.max(0, 1 - stageP / 0.12);
+      pull = PULL_HOLD * q;
+      twist = (warp.twistAtBang || TWIST * warp.spin) * q;
+      ringFlow += dt * 1.6;     // and flung outward
     }
-  }
-
-  // Light streaks rushing past from the throat outward, as if falling
-  // through a tunnel. Depth z runs 1 (far) to 0 (passing the viewer).
-  function createStreaks() {
-    const n = Math.round(Math.min(160, Math.max(70, (W * H) / 9000)));
-    streaks = [];
-    for (let i = 0; i < n; i++) {
-      streaks.push({ a: rand(0, Math.PI * 2), z: Math.random(), speed: rand(0.7, 1.3), pale: Math.random() < 0.35 });
-    }
-  }
-
-  function drawPassage(dt) {
-    const m = Math.min(W, H);
-    const maxR = Math.hypot(W, H);
-    const x = warp.x;
-    const y = warp.y;
-
-    // Deep dark: we're inside now
-    ctx.fillStyle = `rgba(2, 5, 12, ${0.82 * hole})`;
-    ctx.fillRect(0, 0, W, H);
-
-    ctx.globalCompositeOperation = "lighter";
-    const rush = stage === "hold" ? 1 : hole;
-    ctx.lineCap = "round";
-    for (const s of streaks) {
-      s.z -= dt * 0.9 * s.speed * rush;
-      if (s.z <= 0.02) {
-        s.z = 1;
-        s.a = rand(0, Math.PI * 2);
-      }
-      const r1 = (m * 0.05) / s.z;
-      if (r1 > maxR) continue;
-      const r2 = r1 * (1 + 0.35 * (1 - s.z));
-      const ca = Math.cos(s.a + t * 0.5 * warp.spin);
-      const sa = Math.sin(s.a + t * 0.5 * warp.spin);
-      ctx.beginPath();
-      ctx.moveTo(x + ca * r1, y + sa * r1);
-      ctx.lineTo(x + ca * r2, y + sa * r2);
-      ctx.strokeStyle = rgba(s.pale ? PALE : EMERALD, Math.min(0.8, (1 - s.z) * 0.9) * hole);
-      ctx.lineWidth = 0.6 + 1.6 * (1 - s.z);
-      ctx.stroke();
-    }
-
-    // The black hole: a tilted accretion disc swirling around a dark core
-    // with a thin photon ring. Front half of the disc is drawn over the core.
-    // Floor keeps it legible on phones, where min(W, H) is small
-    const rb = Math.max(26, m * 0.055) * (0.85 + 0.15 * hole);
-    const spinA = t * 2.2 * warp.spin;
-    const disc = (from, to) => {
-      for (let k = 0; k < 3; k++) {
-        ctx.beginPath();
-        ctx.ellipse(x, y, rb * (2.1 + k * 0.35), rb * (0.55 + k * 0.1), -0.18, from, to);
-        ctx.strokeStyle = rgba(k === 0 ? GOLD : EMERALD, (0.5 - k * 0.13) * hole);
-        ctx.lineWidth = rb * (0.28 - k * 0.06);
-        ctx.stroke();
-      }
-      // Bright clumps orbiting in the disc so its rotation reads
-      for (let k = 0; k < 6; k++) {
-        const a = spinA + (k * Math.PI) / 3;
-        const inFront = Math.sin(a) > 0;
-        if ((from === 0) !== inFront) continue;
-        const px = x + Math.cos(a) * rb * 2.3 * Math.cos(-0.18) - Math.sin(a) * rb * 0.6 * Math.sin(-0.18);
-        const py = y + Math.cos(a) * rb * 2.3 * Math.sin(-0.18) + Math.sin(a) * rb * 0.6 * Math.cos(-0.18);
-        const g = ctx.createRadialGradient(px, py, 0, px, py, rb * 0.5);
-        g.addColorStop(0, rgba(PALE, 0.55 * hole));
-        g.addColorStop(1, rgba(EMERALD, 0));
-        ctx.fillStyle = g;
-        ctx.fillRect(px - rb * 0.5, py - rb * 0.5, rb, rb);
-      }
-    };
-    disc(Math.PI, Math.PI * 2);   // back half
-
-    // Gravitational lensing: light from the far side of the disc bent up over
-    // the top of the hole and under the bottom, so it doesn't read as a ringed
-    // planet
-    for (let k = 0; k < 2; k++) {
-      ctx.beginPath();
-      ctx.ellipse(x, y, rb * (1.45 + k * 0.18), rb * (1.3 + k * 0.16), -0.18, 0, Math.PI * 2);
-      ctx.strokeStyle = rgba(k === 0 ? GOLD : EMERALD, (0.38 - k * 0.14) * hole);
-      ctx.lineWidth = rb * (0.2 - k * 0.07);
-      ctx.stroke();
-    }
-
-    ctx.globalCompositeOperation = "source-over";
-    ctx.beginPath();
-    ctx.arc(x, y, rb, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(0, 0, 0, ${hole})`;
-    ctx.fill();
-
-    ctx.globalCompositeOperation = "lighter";
-    ctx.beginPath();
-    ctx.arc(x, y, rb * 1.06, 0, Math.PI * 2);
-    ctx.strokeStyle = rgba(PALE, 0.7 * hole);
-    ctx.lineWidth = Math.max(1, rb * 0.06);
-    ctx.stroke();
-    disc(0, Math.PI);             // front half
-    ctx.globalCompositeOperation = "source-over";
   }
 
   // Space-time fabric rings flowing into the point (collapse) and out of it
   // (expansion), a darkening sky, the singularity, and the bang.
-  function drawCollapse(dt) {
+  function drawCollapse() {
     const maxR = Math.hypot(W, H);
     const n = 9;
     const flow = ((ringFlow % 1) + 1) % 1;
-    if (envelope > 0.01 && stage !== "hold") {
+    if (envelope > 0.01) {
       ctx.lineWidth = 1;
       for (let i = 0; i < n; i++) {
         const f = (i + flow) / n;
@@ -436,13 +339,12 @@
       ctx.fillRect(0, 0, W, H);
     }
 
-    if (hole > 0.01) drawPassage(dt);
 
     ctx.globalCompositeOperation = "lighter";
-    // The singularity: a pinpoint that tightens and brightens as space
-    // falls in, before the black hole opens around it
-    if (stage === "collapse" && stageP < 0.85) {
-      const s = easeIn(stageP / 0.85);
+    // The singularity: a pinpoint at the heart of the vortex that tightens
+    // and brightens as space falls in and holds while it spins
+    if (stage === "collapse" || stage === "hold") {
+      const s = stage === "hold" ? 0.45 : 0.45 * easeIn(stageP);
       const pr = 3 + 5 * s;
       const core = ctx.createRadialGradient(warp.x, warp.y, 0, warp.x, warp.y, pr * 4);
       core.addColorStop(0, rgba(WHITE, 0.95 * s));
@@ -481,13 +383,14 @@
     if (reduceMotion || !isInitialized) return;
     const d = e.detail || {};
     const onScreen = d.x >= 0 && d.x <= W && d.y >= 0 && d.y <= H;
-    if (!streaks.length) createStreaks();
     warp = {
       start: t,
       // Opening spirals clockwise (positive angle, y pointing down);
       // closing winds the other way
       spin: d.dir < 0 ? -1 : 1,
       timing: d.dir < 0 ? TIMING.close : TIMING.open,
+      holdSpin: 0,
+      twistAtBang: 0,
       x: onScreen ? d.x : cx,
       y: onScreen ? d.y : cy
     };
@@ -551,6 +454,10 @@
       ctx.drawImage(nebula, 0, 0, W, H);
     }
 
+    // Stars shrink with the space they sit in, so the crushed galaxy keeps its
+    // spiral structure instead of fusing into a blob
+    const shrink = 1 - 0.6 * (pull / PULL_HOLD);
+
     // Far starfield: batched into one path per colour/alpha bucket
     const cosS = Math.cos(skyAngle);
     const sinS = Math.sin(skyAngle);
@@ -559,8 +466,9 @@
       for (const s of bucket.stars) {
         bend(cx + s.x * cosS - s.y * sinS, cy + s.x * sinS + s.y * cosS);
         if (bx < -2 || bx > W + 2 || by < -2 || by > H + 2) continue;
-        ctx.moveTo(bx + s.r, by);
-        ctx.arc(bx, by, s.r, 0, Math.PI * 2);
+        const r = s.r * shrink;
+        ctx.moveTo(bx + r, by);
+        ctx.arc(bx, by, r, 0, Math.PI * 2);
       }
       ctx.fillStyle = rgba(bucket.color, bucket.alpha);
       ctx.fill();
@@ -570,7 +478,7 @@
       bend(cx + s.x * cosS - s.y * sinS, cy + s.x * sinS + s.y * cosS);
       if (bx < -10 || bx > W + 10 || by < -10 || by > H + 10) continue;
       const a = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * s.speed + s.phase));
-      const size = s.size * 4 * config.starScale;
+      const size = s.size * 4 * config.starScale * shrink;
       ctx.globalAlpha = a * 0.9;
       ctx.drawImage(sprites.get(s.color), bx - size / 2, by - size / 2, size, size);
     }
@@ -587,14 +495,14 @@
       bend(cx + dx * cosP - dy * sinP, cy + dx * sinP + dy * cosP);
       if (bx < -20 || bx > W + 20 || by < -20 || by > H + 20) continue;
       const pulse = 0.5 + 0.5 * Math.sin(t * s.pulse + s.phase);
-      const size = (s.size + pulse * 0.5) * 4.5 * config.starScale;
+      const size = (s.size + pulse * 0.5) * 4.5 * config.starScale * shrink;
       ctx.globalAlpha = Math.min(1, s.brightness * (0.75 + 0.25 * pulse));
       ctx.drawImage(sprites.get(s.color), bx - size / 2, by - size / 2, size, size);
     }
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = "source-over";
 
-    if (warp) drawCollapse(dt);
+    if (warp) drawCollapse();
 
     // Dim rather than erase: the glass card blurs what's left behind it,
     // so the galaxy glows through instead of leaving a flat dark cut-out.
@@ -643,7 +551,6 @@
     resizeCanvas();
     nebula = buildNebula();
     createStars();
-    createStreaks();
   }
 
   // Debounced resize. Ignore height-only changes under ~120px so mobile

@@ -31,19 +31,19 @@ export default function Home() {
     return true;
   };
   const reveal = () => {
-    if (revealed || !claim(2300)) return;
+    if (revealed || !claim(2150)) return;
     emitWarp(1, sigilRef.current);
     setRevealed(true);
   };
   const scrollTimer = useRef(null);
   const close = () => {
-    if (!claim(2600)) return;
+    if (!claim(2450)) return;
     const collapse = () => {
       emitWarp(-1, sigilRef.current);
       setRevealed(false);
       setClosing(true);
       clearTimeout(closingTimer.current);
-      closingTimer.current = setTimeout(() => setClosing(false), 2200);
+      closingTimer.current = setTimeout(() => setClosing(false), 2000);
     };
     // The collapse happens at the seal, so bring it back into view first
     clearTimeout(scrollTimer.current);
@@ -243,7 +243,7 @@ export default function Home() {
                 // The seal falls into the wormhole's throat
                 ? 'opacity-[0.01] scale-[0.35] pointer-events-none'
                 // On close the seal waits out the collapse and the passage
-                : 'opacity-95 cursor-pointer hover:scale-[1.03]' + (closing && !REDUCED_MOTION ? ' delay-[1250ms]' : '')
+                : 'opacity-95 cursor-pointer hover:scale-[1.03]' + (closing && !REDUCED_MOTION ? ' delay-[1150ms]' : '')
             ].join(' ')}
             style={{ top: ANCHOR_TOP, mixBlendMode: 'screen' }}
           >
@@ -304,7 +304,7 @@ export default function Home() {
               revealed
                 // Born in the big bang: bursts out of the singularity once the
                 // collapse is done
-                ? 'opacity-100 scale-100 rotate-0 pointer-events-auto ' + (REDUCED_MOTION ? '' : 'delay-[1400ms]')
+                ? 'opacity-100 scale-100 rotate-0 pointer-events-auto ' + (REDUCED_MOTION ? '' : 'delay-[1200ms]')
                 : closing
                   // Sucked into the seal: swirling anticlockwise (the reverse of
                   // the clockwise opening) and accelerating inward
@@ -478,7 +478,7 @@ export default function Home() {
           className={[
             'transition-all duration-700 ease-out overflow-hidden',
             revealed
-              ? 'opacity-100 max-h-[5000px] ' + (REDUCED_MOTION ? '' : 'delay-[1400ms]')
+              ? 'opacity-100 max-h-[5000px] ' + (REDUCED_MOTION ? '' : 'delay-[1200ms]')
               : 'opacity-0 max-h-0 pointer-events-none'
           ].join(' ')}
           aria-hidden={!revealed}
@@ -491,7 +491,7 @@ export default function Home() {
         className={[
           'transition-all duration-700 ease-out overflow-hidden',
           revealed
-            ? 'opacity-100 max-h-[400px] ' + (REDUCED_MOTION ? '' : 'delay-[1400ms]')
+            ? 'opacity-100 max-h-[400px] ' + (REDUCED_MOTION ? '' : 'delay-[1200ms]')
             : 'opacity-0 max-h-0 pointer-events-none'
         ].join(' ')}
         aria-hidden={!revealed}
