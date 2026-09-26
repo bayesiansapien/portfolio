@@ -184,7 +184,7 @@ export default function Home() {
     const measure = () => {
       const sec = section.getBoundingClientRect();
       const bottom = sigil.getBoundingClientRect().bottom - sec.top;
-      const gap = Math.min(128, Math.max(44, Math.min(window.innerWidth * 0.1, window.innerHeight * 0.16)));
+      const gap = Math.min(90, Math.max(40, Math.min(window.innerWidth * 0.06, window.innerHeight * 0.09)));
       // Never let the hint slip below the fold on short screens
       const textH = hintTextRef.current?.offsetHeight || 48;
       const limit = window.innerHeight - 12 - sec.top - window.scrollY - textH;

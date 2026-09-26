@@ -48,7 +48,7 @@ The **real** entry is `src/main.jsx` — it imports `src/index.css`, defines a s
 A single `revealed` boolean drives everything:
 
 - **Unrevealed (default):** `public/bayesian-sigil.png` is a button centered at `ANCHOR_TOP = '38vh'`, with `mix-blend-mode: screen` and the amber `animate-sigil-glow` pulse. Behind it is a blurred radial "black-hole halo" div (it doubles as the galaxy's core, see bg.js). Below it, the Allura "Tap to Unravel the Sapien" hint:
-  - Is positioned from the sigil's **measured** bottom (`hintTop`, via `ResizeObserver`), because the sigil renders far smaller on phones than its `clamp()` width suggests. The gap is `clamp(44px, min(10vw, 16vh), 128px)`, capped so the hint never drops below the fold. The sigil is also capped at `62vh` wide so short laptops keep room for it.
+  - Is positioned from the sigil's **measured** bottom (`hintTop`, via `ResizeObserver`), because the sigil renders far smaller on phones than its `clamp()` width suggests. The gap is `clamp(40px, min(6vw, 9vh), 90px)` (the PNG has ~40px of transparent space under the wordmark, so the visible gap is larger), capped so the hint never drops below the fold. The sigil is also capped at `62vh` wide so short laptops keep room for it.
   - Is **clickable** and reveals just like the seal. A 350ms hover grace (`hoverOn`/`hoverOff`) lets the pointer travel from seal to hint without it vanishing.
   - On touch devices (`(hover: none)`) `hovered` is pinned `true`, so it's always visible.
   - Short landscape viewports (`max-height: 500px`) shrink the sigil to `56vh` and the hint font so both fit.
@@ -106,7 +106,7 @@ On top of `@import "tailwindcss"`:
 
 ## Other components
 
-- **`src/components/Footer.jsx`** — Social icon pill (Google Scholar, GitHub, LinkedIn, X, Substack) + copyright. Icons carry inline stitch styles, so their hover colour change is instant. Inline styles for the dark pill are deliberate (Tailwind arbitrary bg was fighting the canvas); **leave them alone** unless re-tested against the background. Note its GitHub link is `github.com/polyrhythML` while the Home sidebar uses `github.com/bayesiansapien`.
+- **`src/components/Footer.jsx`** — Social icon pill (Google Scholar, GitHub, LinkedIn, X, Substack) + copyright. Icons carry inline stitch styles, so their hover colour change is instant. Inline styles for the dark pill are deliberate (Tailwind arbitrary bg was fighting the canvas); **leave them alone** unless re-tested against the background.
 - **`src/shared/AskBox.jsx`** — Loads `/qna.json`, Fuse over `q` + `tags` (threshold 0.4), chips + input, shows top match. `qna.json` has only 3 entries and still contains `yourblog.example.com` placeholder links.
 
 ## Public assets (`public/`)
