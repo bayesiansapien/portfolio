@@ -48,7 +48,7 @@ The **real** entry is `src/main.jsx` — it imports `src/index.css`, defines a s
 A single `revealed` boolean drives everything:
 
 - **Unrevealed (default):** `public/bayesian-sigil.png` is a button centered at `ANCHOR_TOP = '38vh'`, with `mix-blend-mode: screen` and the amber `animate-sigil-glow` pulse. Behind it is a blurred radial "black-hole halo" div (it doubles as the galaxy's core, see bg.js). Below it, the Allura "Tap to Unravel the Sapien" hint:
-  - Is positioned from the sigil's **measured** bottom (`hintTop`, via `ResizeObserver`), because the sigil renders far smaller on phones than its `clamp()` width suggests.
+  - Is positioned from the sigil's **measured** bottom (`hintTop`, via `ResizeObserver`), because the sigil renders far smaller on phones than its `clamp()` width suggests. The gap is `clamp(48px, min(11vw, 18vh), 145px)`, capped so the hint never drops below the fold. The sigil is also capped at `62vh` wide so short laptops keep room for it.
   - Is **clickable** and reveals just like the seal. A 350ms hover grace (`hoverOn`/`hoverOff`) lets the pointer travel from seal to hint without it vanishing.
   - On touch devices (`(hover: none)`) `hovered` is pinned `true`, so it's always visible.
   - Short landscape viewports (`max-height: 500px`) shrink the sigil to `56vh` and the hint font so both fit.

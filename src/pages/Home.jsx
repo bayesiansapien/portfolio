@@ -101,6 +101,7 @@ export default function Home() {
   // rather than guessing from the viewport width.
   const sectionRef = useRef(null);
   const sigilRef = useRef(null);
+  const hintTextRef = useRef(null);
   const [hintTop, setHintTop] = useState(null);
 
   // Once revealed, the bio row lifts toward the top of the viewport and the
@@ -150,9 +151,13 @@ export default function Home() {
     const sigil = sigilRef.current;
     if (!section || !sigil) return;
     const measure = () => {
-      const bottom = sigil.getBoundingClientRect().bottom - section.getBoundingClientRect().top;
-      const gap = Math.min(120, Math.max(32, Math.min(window.innerWidth * 0.08, window.innerHeight * 0.14)));
-      setHintTop(Math.round(bottom + gap));
+      const sec = section.getBoundingClientRect();
+      const bottom = sigil.getBoundingClientRect().bottom - sec.top;
+      const gap = Math.min(145, Math.max(48, Math.min(window.innerWidth * 0.11, window.innerHeight * 0.18)));
+      // Never let the hint slip below the fold on short screens
+      const textH = hintTextRef.current?.offsetHeight || 48;
+      const limit = window.innerHeight - 12 - sec.top - window.scrollY - textH;
+      setHintTop(Math.round(Math.max(bottom + 32, Math.min(bottom + gap, limit))));
     };
     measure();
     const ro = new ResizeObserver(measure);
@@ -239,7 +244,9 @@ export default function Home() {
               className={[
                 // Short landscape viewports (phones on their side) would otherwise
                 // push the seal off the top edge and the hint below the fold.
-                'select-none aspect-square w-[clamp(380px,82vw,760px)] [@media(max-height:500px)]:max-w-[56vh]',
+                // Capped by viewport height too, so short laptop screens keep
+                // room for the hint below it.
+                'select-none aspect-square w-[clamp(380px,82vw,760px)] max-w-[min(100%,62vh)] [@media(max-height:500px)]:max-w-[56vh]',
                 revealed ? '' : 'animate-sigil-glow'
               ].join(' ')}
             />
@@ -263,6 +270,7 @@ export default function Home() {
             style={{ top: hintTop != null ? `${hintTop}px` : `calc(${ANCHOR_TOP} + clamp(260px, 56vw, 420px))` }}
           >
             <span
+              ref={hintTextRef}
               className="font-script text-[28px] sm:text-3xl md:text-4xl lg:text-5xl [@media(max-height:500px)]:text-3xl text-amber-200 tracking-wide whitespace-nowrap"
               style={{
                 filter:
