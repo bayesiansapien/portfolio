@@ -26,14 +26,28 @@ export default function Home() {
     emitWarp(1, sigilRef.current);
     setRevealed(true);
   };
+  const scrollTimer = useRef(null);
   const close = () => {
-    emitWarp(-1, sigilRef.current);
-    setRevealed(false);
-    setClosing(true);
-    clearTimeout(closingTimer.current);
-    closingTimer.current = setTimeout(() => setClosing(false), 1400);
+    const collapse = () => {
+      emitWarp(-1, sigilRef.current);
+      setRevealed(false);
+      setClosing(true);
+      clearTimeout(closingTimer.current);
+      closingTimer.current = setTimeout(() => setClosing(false), 1400);
+    };
+    // The collapse happens at the seal, so bring it back into view first
+    clearTimeout(scrollTimer.current);
+    if (window.scrollY > 20) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollTimer.current = setTimeout(collapse, 450);
+    } else {
+      collapse();
+    }
   };
-  useEffect(() => () => clearTimeout(closingTimer.current), []);
+  useEffect(() => () => {
+    clearTimeout(closingTimer.current);
+    clearTimeout(scrollTimer.current);
+  }, []);
   useEffect(() => {
     closeRef.current = close;
   });
@@ -76,14 +90,10 @@ export default function Home() {
     return () => mq.removeEventListener?.('change', sync);
   }, []);
 
-  // Anchor where the sigil's circular composition center AND the bubble's
-  // avatar center both align. Viewport-relative (vh) instead of section-%
-  // so the sigil stays put when the section grows to accommodate the bubble
+  // Where the sigil's circular composition is centered. Viewport-relative
+  // (vh) instead of section-% so the sigil stays put when the section grows
   // on reveal. 38vh lifts the seal into the upper-middle of the viewport.
   const ANCHOR_TOP = '38vh';
-  // Bubble padding-top + half the avatar's height. Used to offset the bubble
-  // upward so the avatar's center lands on the anchor.
-  const AVATAR_OFFSET = 100;
 
   // The sigil's rendered size is capped by its container, so on phones it
   // comes out far smaller than its clamp() width suggests. Measure where the
@@ -105,10 +115,25 @@ export default function Home() {
   const revealedTop = () =>
     Math.round(Math.min(REVEALED_TOP_MAX, Math.max(REVEALED_TOP_MIN, window.innerHeight * 0.06)));
 
+  // The row grows out of (and collapses back into) the singularity at the
+  // seal's center, so its transform-origin is aimed there. offsetLeft/Top are
+  // pre-transform, and the row is shifted left by half its width.
+  const [origin, setOrigin] = useState('50% 50%');
+
   useLayoutEffect(() => {
     const row = rowRef.current;
     if (!row) return;
-    const measure = () => setRevealedMinH(revealedTop() + row.offsetHeight + REVEALED_GAP);
+    const measure = () => {
+      setRevealedMinH(revealedTop() + row.offsetHeight + REVEALED_GAP);
+      const sigil = sigilRef.current;
+      const section = sectionRef.current;
+      if (!sigil || !section) return;
+      const s = sigil.getBoundingClientRect();
+      const sec = section.getBoundingClientRect();
+      const ox = s.left + s.width / 2 - sec.left - row.offsetLeft + row.offsetWidth / 2;
+      const oy = s.top + s.height / 2 - sec.top - row.offsetTop;
+      setOrigin(`${Math.round(ox)}px ${Math.round(oy)}px`);
+    };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(row);
@@ -258,15 +283,22 @@ export default function Home() {
               'flex justify-center items-center gap-6 w-full max-w-7xl px-4',
               'transition-all duration-700 ease-out',
               revealed
-                // Born in the big bang: expands out of the singularity once the
-                // collapse is done; on close it falls back into it at once
-                ? 'opacity-100 scale-100 pointer-events-auto delay-[700ms]'
-                : 'opacity-0 scale-[0.3] pointer-events-none'
+                // Born in the big bang: bursts out of the singularity once the
+                // collapse is done
+                ? 'opacity-100 scale-100 rotate-0 pointer-events-auto delay-[700ms]'
+                : closing
+                  // Sucked into the seal: swirling and accelerating inward
+                  ? 'opacity-0 scale-[0.02] rotate-[140deg] pointer-events-none'
+                  : 'opacity-0 scale-[0.05] pointer-events-none'
             ].join(' ')}
             style={{
-              top: revealed
-                ? `clamp(${REVEALED_TOP_MIN}px, 6vh, ${REVEALED_TOP_MAX}px)`
-                : `calc(${ANCHOR_TOP} - ${AVATAR_OFFSET}px)`
+              // Pinned at its revealed position so it has one fixed point to
+              // grow out of and collapse into
+              top: `clamp(${REVEALED_TOP_MIN}px, 6vh, ${REVEALED_TOP_MAX}px)`,
+              transformOrigin: origin,
+              ...(closing && !revealed
+                ? { transitionDuration: '650ms', transitionTimingFunction: 'cubic-bezier(0.55, 0, 1, 0.45)' }
+                : null)
             }}
             aria-hidden={!revealed}
           >
