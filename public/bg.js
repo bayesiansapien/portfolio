@@ -280,14 +280,14 @@
       const q = easeIn(p / BANG);
       envelope = q;
       pull = PULL * q;
-      twist = TWIST * q;
+      twist = TWIST * q * warp.spin;
       ringFlow -= dt * 1.1;     // fabric rings drawn into the point
     } else {
       // Explosive at first, then settling back into place
       const q = 1 - easeOutQuint((p - BANG) / (1 - BANG));
       envelope = q;
       pull = PULL * q;
-      twist = TWIST * 0.25 * q; // expands outward rather than unwinding
+      twist = TWIST * 0.25 * q * warp.spin; // expands outward rather than unwinding
       ringFlow += dt * 1.6;     // and flung outward by the bang
     }
   }
@@ -362,6 +362,9 @@
     const onScreen = d.x >= 0 && d.x <= W && d.y >= 0 && d.y <= H;
     warp = {
       start: t,
+      // Opening spirals clockwise (positive angle, y pointing down);
+      // closing winds the other way
+      spin: d.dir < 0 ? -1 : 1,
       duration: d.dir < 0 ? WARP_CLOSE : WARP_OPEN,
       x: onScreen ? d.x : cx,
       y: onScreen ? d.y : cy

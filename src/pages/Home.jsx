@@ -287,8 +287,9 @@ export default function Home() {
                 // collapse is done
                 ? 'opacity-100 scale-100 rotate-0 pointer-events-auto delay-[700ms]'
                 : closing
-                  // Sucked into the seal: swirling and accelerating inward
-                  ? 'opacity-0 scale-[0.02] rotate-[140deg] pointer-events-none'
+                  // Sucked into the seal: swirling anticlockwise (the reverse of
+                  // the clockwise opening) and accelerating inward
+                  ? 'opacity-0 scale-[0.02] -rotate-[140deg] pointer-events-none'
                   : 'opacity-0 scale-[0.05] pointer-events-none'
             ].join(' ')}
             style={{
