@@ -15,7 +15,7 @@ This applies retroactively too: if a commit / PR / file gets re-edited, strip an
 
 ## What this is
 
-Personal portfolio for **bayesiansapien.tech** (Amit Singh Bhatti). Single-page React app, two routes, a full-viewport animated particle canvas in the background, a sigil "front door" that reveals the bio on click, and a Recent Posts list fed from Substack. Deployed as a static site built from source (Netlify-style `_redirects` rewrites everything to `index.html`). `dist/` and `node_modules/` are gitignored — the host runs `npm run build`.
+Personal portfolio for **bayesiansapien.tech** (Amit Singh Bhatti). Single-page React app, two routes, a full-viewport animated spiral-galaxy canvas in the background, a sigil "front door" that reveals the bio on click through a collapse / big-bang transition, and a Recent Posts list fed from Substack. Deployed as a static site built from source (Netlify-style `_redirects` rewrites everything to `index.html`). `dist/` and `node_modules/` are gitignored — the host runs `npm run build`.
 
 ## Stack
 
@@ -47,11 +47,14 @@ The **real** entry is `src/main.jsx` — it imports `src/index.css`, defines a s
 
 A single `revealed` boolean drives everything:
 
-- **Unrevealed (default):** `public/bayesian-sigil.png` is a button centered at `ANCHOR_TOP = '38vh'`, with `mix-blend-mode: screen` and the amber `animate-sigil-glow` pulse. Behind it is a blurred radial "black-hole halo" div. Below it, the Allura "Tap to Unravel the Sapien" hint fades in on hover/focus; on touch devices (`(hover: none)`) `hovered` is pinned `true` so the hint is always visible.
-- **Revealed (click the sigil):** sigil fades to `opacity-[0.01]`, halo fades out, and the bio row fades/scales in, positioned so the avatar center lands on the same anchor (`AVATAR_OFFSET = 100`). The row holds `#hero-bubble` (avatar, name, bio, Subscribe / RSS / Research Wiki buttons, close ×) and, on `lg+`, a vertical social sidebar (CV, GitHub, LinkedIn, X, Substack). `RecentBlogPosts` and `Footer` are gated behind `revealed` via `max-h`/opacity transitions. Esc or × un-reveals.
-- The section's `min-h` differs by breakpoint *and* by state (the bio wraps to many more lines on phones). If you change bio copy length or bubble padding, re-check these values at 375px, `sm`, `md`, `lg` so the bubble doesn't overlap "Recent Notes".
-
-Everything is absolutely positioned relative to the anchor, so layout tweaks usually mean adjusting `ANCHOR_TOP`, `AVATAR_OFFSET`, the hint's `top: calc(...)`, and the `min-h` classes together.
+- **Unrevealed (default):** `public/bayesian-sigil.png` is a button centered at `ANCHOR_TOP = '38vh'`, with `mix-blend-mode: screen` and the amber `animate-sigil-glow` pulse. Behind it is a blurred radial "black-hole halo" div (it doubles as the galaxy's core, see bg.js). Below it, the Allura "Tap to Unravel the Sapien" hint:
+  - Is positioned from the sigil's **measured** bottom (`hintTop`, via `ResizeObserver`), because the sigil renders far smaller on phones than its `clamp()` width suggests.
+  - Is **clickable** and reveals just like the seal. A 350ms hover grace (`hoverOn`/`hoverOff`) lets the pointer travel from seal to hint without it vanishing.
+  - On touch devices (`(hover: none)`) `hovered` is pinned `true`, so it's always visible.
+  - Short landscape viewports (`max-height: 500px`) shrink the sigil to `56vh` and the hint font so both fit.
+- **Revealed:** `reveal()` dispatches a `cosmic:warp` event to bg.js, the seal shrinks into the singularity, and the bio row (`#hero-bubble` + `lg+` sidebar with CV / Google Scholar / GitHub / LinkedIn / X / Substack) is born out of the big bang at `top: clamp(16px, 6vh, 80px)`. The section's revealed `min-height` is **measured** from the row (`revealedMinH`) so the "Recent Notes" header peeks above the fold on desktop/tablet. `close()` (× or Esc) plays the same collapse/bang and sets `closing` so the seal re-emerges after the card has fallen in.
+- **Stitching:** after the bang the whole page assembles from pieces: avatar, each word of heading/bio/post titles/excerpts, buttons, sidebar and footer icons, blog cards. See `src/shared/stitch.js` (`stitch(i, revealed, extra)` returns the inline style; `BANG_MS` must match bg.js's `BANG * WARP_OPEN`) and `src/shared/Stitched.jsx` (word splitter). `RecentBlogPosts` and `Footer` take a `revealed` prop (default `true`). Timing is driven by per-piece `extra` delays so the page cascades top to bottom; it's data-driven, so new posts stitch automatically.
+- **Layering trap:** the bio row has `z-10` on purpose. Its translate/scale make it a stacking context, and without an explicit z-index bg.js's canvas (appended to `body` later at `z-index: 0`) paints *over* the card.
 
 ## Visual system
 
@@ -70,10 +73,19 @@ className="rounded-2xl ring-1 ring-white/15 backdrop-blur-xl backdrop-saturate-1
            shadow-[0_0_30px_rgba(82,246,197,0.1)] bg-white/5 overflow-hidden"
 ```
 
-`#hero-bubble` is the loudest version (`rounded-3xl`, `shadow-[0_0_70px_rgba(82,246,197,0.22)]`, `bg-black/10`). Blog post cards use inline styles plus a thick emerald border — a deliberate variant, leave it.
+`#hero-bubble` is the main variant: `rounded-3xl`, `ring-white/10`, `bg-[#0b1220]/55`, `backdrop-blur-md` (light enough that the galaxy glows through), soft emerald shadow. Blog post cards use inline styles plus a thick emerald border — a deliberate variant, leave it.
 
 ### Animated background — `public/bg.js`
-Vanilla JS IIFE, no React. Fixed full-viewport `<canvas>` at `z-index: 0`, ~350 emerald nodes orbiting in an ellipse with pulsing halos. Fades in after fonts/layout settle. Each frame it reads `#hero-bubble`'s rect and composites a `destination-out` rounded rect over it — **but only when `data-revealed !== "false"`**. So both `id="hero-bubble"` and its `data-revealed` attribute are load-bearing.
+Vanilla JS IIFE, no React. Fixed full-viewport `<canvas>` at `z-index: 0`, fades in after fonts/layout settle. Layers, back to front:
+1. **Haze** — a static, half-resolution, dithered disc glow (teal/emerald/ocean + gold core).
+2. **Starfield** — ~400–2000 crisp points drawn live each frame at device resolution (batched by colour/alpha bucket), turning slowly about the core, plus twinklers.
+3. **Galaxy** — a tilted two-arm log-spiral of emerald/cyan/aqua stars with a gold bulge, centered on the sigil (`findCenter()`), with gentle differential rotation. Drawn additively from pre-rendered crisp sprites.
+
+Tunables live in `config` (`starScale`, `patternSpeed`, `skySpeed`, `tilt`, …). There are **no** soft glow blobs, meteors or static layers on purpose. The owner rejected them, along with a magenta/crimson palette and a flashy shockwave transition.
+
+**Transition:** a `cosmic:warp` event (`{dir, x, y}`) starts the collapse. Until `BANG` (0.47 of `WARP_OPEN` = 1.6s) everything, haze included, spirals into a singularity at the seal while the sky darkens. Then it bursts back out (quintic ease) with a soft bloom and a thin wavefront. `bend()` maps every point through the warp. Reduced-motion users get a still sky and no warp.
+
+**Card mask:** each frame it reads `#hero-bubble`'s rect and *dims* (15% `destination-out`) exactly that rounded rect, only when `data-revealed !== "false"`. So both `id="hero-bubble"` and `data-revealed` are load-bearing.
 
 `src/components/NeuronField.jsx` is a richer React/canvas variant (rings + sparks). **Not mounted anywhere.**
 
@@ -94,12 +106,12 @@ On top of `@import "tailwindcss"`:
 
 ## Other components
 
-- **`src/components/Footer.jsx`** — Social icon pill + copyright. Inline styles for the dark pill are deliberate (Tailwind arbitrary bg was fighting the canvas); **leave them alone** unless re-tested against the background. Note its GitHub link is `github.com/polyrhythML` while the Home sidebar uses `github.com/bayesiansapien`.
+- **`src/components/Footer.jsx`** — Social icon pill (Google Scholar, GitHub, LinkedIn, X, Substack) + copyright. Icons carry inline stitch styles, so their hover colour change is instant. Inline styles for the dark pill are deliberate (Tailwind arbitrary bg was fighting the canvas); **leave them alone** unless re-tested against the background. Note its GitHub link is `github.com/polyrhythML` while the Home sidebar uses `github.com/bayesiansapien`.
 - **`src/shared/AskBox.jsx`** — Loads `/qna.json`, Fuse over `q` + `tags` (threshold 0.4), chips + input, shows top match. `qna.json` has only 3 entries and still contains `yourblog.example.com` placeholder links.
 
 ## Public assets (`public/`)
 
-- `bg.js` — animated background
+- `bg.js` — animated galaxy background + collapse/big-bang transition
 - `bayesian-sigil.png` — the front-door seal
 - `avatar.png`, `resume.pdf` (linked as CV)
 - `posts.json` — generated; don't hand-edit except to seed
