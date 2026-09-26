@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { stitch } from '../shared/stitch';
+import Stitched from '../shared/Stitched';
 
 const FALLBACK_POSTS = [
   {
@@ -27,7 +29,7 @@ const FALLBACK_POSTS = [
   }
 ];
 
-export default function RecentBlogPosts() {
+export default function RecentBlogPosts({ revealed = true }) {
   const [posts, setPosts] = useState(FALLBACK_POSTS);
   const [loading, setLoading] = useState(true);
   const [usingFallback, setUsingFallback] = useState(false);
@@ -109,7 +111,7 @@ export default function RecentBlogPosts() {
 
   return (
     <section className="max-w-5xl mx-auto px-4 py-16">
-      <div className="flex justify-center mb-12">
+      <div className="relative z-10 flex justify-center mb-12" style={stitch(300, revealed, 150)}>
         <div className="relative w-auto rounded-2xl px-6 py-3 ring-1 ring-white/15 backdrop-blur-xl shadow-[0_0_30px_rgba(82,246,197,0.1)] overflow-hidden backdrop-blur-xl backdrop-saturate-150 bg-white/5">
           <h2 className="text-3xl font-bold text-center text-slate-100">
             Recent Notes and Blog Entries
@@ -117,7 +119,7 @@ export default function RecentBlogPosts() {
         </div>
       </div>
       
-      <p className="text-center text-slate-300 mb-12">
+      <p className="relative z-10 text-center text-slate-300 mb-12" style={stitch(301, revealed, 220)}>
         See <a 
           href="https://bayesiansapien.substack.com/" 
           className="text-emerald-400 hover:text-emerald-300 underline"
@@ -130,9 +132,10 @@ export default function RecentBlogPosts() {
       </p>
 
       <div className="space-y-8">
-        {posts.map((post) => (
-          <article 
-            key={post.id}
+        {posts.map((post, k) => (
+          // Each card stitches in a beat after the one above it
+          <div key={post.id} className="relative z-10" style={stitch(310 + k * 100, revealed, 280 + k * 140)}>
+          <article
             style={{
               backgroundColor: 'rgba(11, 18, 32, 0.01)',
               backdropFilter: 'blur(24px)',
@@ -149,7 +152,7 @@ export default function RecentBlogPosts() {
               e.currentTarget.style.backgroundColor = 'rgba(11, 18, 32, 0.01)';
             }}
           >
-            <div className="md:w-48 md:flex-shrink-0">
+            <div className="md:w-48 md:flex-shrink-0" style={stitch(311 + k * 100, revealed, 320 + k * 140)}>
               <div className="aspect-[4/3] rounded-lg overflow-hidden bg-gradient-to-br from-emerald-500/20 to-blue-500/20">
                 {post.thumbnail ? (
                   <img 
@@ -181,19 +184,20 @@ export default function RecentBlogPosts() {
                   rel="noopener noreferrer"
                   className="hover:text-emerald-400 transition-colors"
                 >
-                  {post.title}
+                  <Stitched text={post.title} from={320 + k * 100} revealed={revealed} extra={340 + k * 140} />
                 </a>
               </h3>
               
-              <time className="text-sm text-slate-400 mb-3 block">
+              <time className="text-sm text-slate-400 mb-3 block" style={stitch(318 + k * 100, revealed, 380 + k * 140)}>
                 {post.date}
               </time>
               
               <p className="text-slate-300 leading-relaxed">
-                {post.excerpt}
+                <Stitched text={post.excerpt} from={340 + k * 100} revealed={revealed} extra={400 + k * 140} />
               </p>
             </div>
           </article>
+          </div>
         ))}
       </div>
     </section>
