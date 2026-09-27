@@ -83,7 +83,7 @@ Vanilla JS IIFE, no React. Fixed full-viewport `<canvas>` at `z-index: 0`, fades
 
 Tunables live in `config` (`starScale`, `patternSpeed`, `skySpeed`, `tilt`, …). There are **no** soft glow blobs, meteors or static layers on purpose. The owner rejected them, along with a magenta/crimson palette and a flashy shockwave transition.
 
-**Transition (keep it instant, no hold phase: the owner rejected a 0.5s hold and a drawn black hole as laggy/cartoonish):** a `cosmic:warp` event (`{dir, x, y}`) starts the collapse. Until `BANG` (0.47 of `WARP_OPEN` = 1.6s) everything, haze included, spirals into a singularity at the seal while the sky darkens. Then it bursts back out (quintic ease) with a soft bloom and a thin wavefront. `bend()` maps every point through the warp. Reduced-motion users get a still sky and no warp.
+**Transition (keep it instant, no hold phase: the owner rejected a 0.5s hold and a drawn black hole as laggy/cartoonish):** a `cosmic:warp` event (`{dir, x, y}`) starts the collapse. Until `BANG` (0.47 of `WARP_OPEN` = 1.6s) everything, haze included, spirals into a singularity at the seal while the sky darkens. Then it bursts back out (quintic ease) with a soft bloom. **No ring or wavefront lines**: the owner removed them. `bend()` maps every point through the warp. Reduced-motion users get a still sky and no warp.
 
 **Card mask:** each frame it reads `#hero-bubble`'s rect and *dims* (15% `destination-out`) exactly that rounded rect, only when `data-revealed !== "false"`. So both `id="hero-bubble"` and `data-revealed` are load-bearing.
 

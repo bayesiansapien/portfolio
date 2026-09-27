@@ -60,7 +60,7 @@
   const BANG = 0.47;          // fraction of the transition spent collapsing
   const PULL = 0.985;
   const TWIST = 2.4;
-  let pull = 0, twist = 0, envelope = 0, ringFlow = 0, phase = 0;
+  let pull = 0, twist = 0, envelope = 0, phase = 0;
   let bx = 0, by = 0;
 
   const rand = (a, b) => a + Math.random() * (b - a);
@@ -281,35 +281,20 @@
       envelope = q;
       pull = PULL * q;
       twist = TWIST * q * warp.spin;
-      ringFlow -= dt * 1.1;     // fabric rings drawn into the point
     } else {
       // Explosive at first, then settling back into place
       const q = 1 - easeOutQuint((p - BANG) / (1 - BANG));
       envelope = q;
       pull = PULL * q;
       twist = TWIST * 0.25 * q * warp.spin; // expands outward rather than unwinding
-      ringFlow += dt * 1.6;     // and flung outward by the bang
     }
   }
 
-  // Space-time fabric rings flowing into the point (collapse) and out of it
-  // (expansion), a darkening sky, the singularity itself, and the bang.
+  // A darkening sky, the singularity itself, and the bang. No ring lines:
+  // the owner wants the squish carried by the galaxy alone.
   function drawCollapse() {
     const maxR = Math.hypot(W, H);
-    const n = 9;
-    const flow = ((ringFlow % 1) + 1) % 1;
     if (envelope > 0.01) {
-      ctx.lineWidth = 1;
-      for (let i = 0; i < n; i++) {
-        const f = (i + flow) / n;
-        const r = f * f * maxR;
-        if (r < 4) continue;
-        ctx.beginPath();
-        ctx.ellipse(warp.x, warp.y, r, r * 0.86, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = rgba(EMERALD, 0.14 * envelope * Math.min(1, f * 2.2));
-        ctx.stroke();
-      }
-
       const vignette = ctx.createRadialGradient(warp.x, warp.y, maxR * 0.05, warp.x, warp.y, maxR * 0.7);
       vignette.addColorStop(0, "rgba(3, 7, 16, 0)");
       vignette.addColorStop(1, `rgba(3, 7, 16, ${0.7 * envelope})`);
@@ -330,7 +315,7 @@
       ctx.fillStyle = core;
       ctx.fillRect(warp.x - pr * 4, warp.y - pr * 4, pr * 8, pr * 8);
     }
-    // The bang: a soft bloom and a thin wavefront racing outward
+    // The bang: a soft bloom
     if (phase >= BANG) {
       const b = (phase - BANG) / (1 - BANG);
       const bloomR = Math.min(W, H) * (0.08 + 0.4 * easeOut(Math.min(1, b / 0.35)));
@@ -342,15 +327,6 @@
         bloom.addColorStop(1, rgba(EMERALD, 0));
         ctx.fillStyle = bloom;
         ctx.fillRect(warp.x - bloomR, warp.y - bloomR, bloomR * 2, bloomR * 2);
-      }
-      const front = easeOut(Math.min(1, b / 0.6)) * maxR;
-      const frontA = Math.max(0, 1 - b / 0.6);
-      if (frontA > 0 && front > 2) {
-        ctx.beginPath();
-        ctx.ellipse(warp.x, warp.y, front, front * 0.86, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = rgba(PALE, 0.3 * frontA);
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
       }
     }
     ctx.globalCompositeOperation = "source-over";
