@@ -94,7 +94,7 @@ On top of `@import "tailwindcss"`:
 - `body { background: #0b1220 }`
 - `.neon-emerald` + `neonPulse` — unused but available
 - `.poppins`, `.font-script` — font helpers
-- `.animate-sigil-glow` (`sigilGlow`, amber drop-shadows, 3.2s) — used on the sigil; has a reduced-motion fallback
+- `.animate-sigil-glow` (`sigilGlow`, amber drop-shadows plus a gentle 0.97 → 1 scale breath, 3s) — used on the sigil; has a reduced-motion fallback (no pulse, full size)
 - `.animate-glow-pulse` (`glowPulse`) — leftover from an older "About me" chip, currently unused
 
 ## Recent posts pipeline

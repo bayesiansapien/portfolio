@@ -42,24 +42,26 @@ body { background: #0b1220; }
 /* Allura cursive — matches the BayesianSapien wordmark inside the sigil */
 .font-script { font-family: "Allura", "Brush Script MT", cursive; }
 
-/* Pulsing emerald glow applied to the whole sigil. Two stacked drop-shadows
-   give a tight inner halo + diffuse outer wash, breathing in unison so the
-   seal feels alive without being noisy. */
+/* Pulsing glow applied to the whole sigil. Two stacked drop-shadows give a
+   tight inner halo + diffuse outer wash, and the seal itself breathes with
+   them: full size at the brightest point, a touch smaller as it dims. */
 @keyframes sigilGlow {
   0%, 100% {
+    scale: 0.97;
     filter:
       drop-shadow(0 0 22px rgba(251, 191, 36, 0.38))
       drop-shadow(0 0 60px rgba(251, 146, 60, 0.16));
   }
   50% {
+    scale: 1;
     filter:
       drop-shadow(0 0 40px rgba(251, 191, 36, 0.70))
       drop-shadow(0 0 110px rgba(251, 146, 60, 0.34));
   }
 }
 .animate-sigil-glow {
-  animation: sigilGlow 3.2s ease-in-out infinite;
-  will-change: filter;
+  animation: sigilGlow 3s ease-in-out infinite;
+  will-change: filter, scale;
 }
 @media (prefers-reduced-motion: reduce) {
   .animate-sigil-glow {
