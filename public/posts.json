@@ -1,26 +1,26 @@
 {
-  "generated_at": "2026-09-26T08:12:36.352Z",
+  "generated_at": "2026-09-28T01:28:25.444Z",
   "articles": [
+    {
+      "title": "The Calibration Gap Under Every System One Model",
+      "link": "https://bayesiansapien.substack.com/p/the-calibration-gap-under-every-system",
+      "date": "2026-09-27T20:39:04.000Z",
+      "description": "The probability is the whole product, and almost nobody has measured whether it holds on their own traffic.",
+      "thumbnail": "https://substackcdn.com/image/fetch/$s_!KGbf!,f_auto,q_auto:good,fl_progressive:steep/https://substack-post-media.s3.amazonaws.com/public/images/78d1c11e-7b7e-4cda-8710-3202b15d8ede_4068x2478.png"
+    },
     {
       "title": "The Harness Sets the Bill, Not the Model You Picked",
       "link": "https://bayesiansapien.substack.com/p/the-harness-sets-the-bill-not-the",
-      "date": "2026-09-05T15:03:18.000Z",
+      "date": "2026-09-05T20:33:18.000Z",
       "description": "Same model, same accuracy, a 40-fold gap in tokens spent, and none of it comes from the model.",
       "thumbnail": "https://substackcdn.com/image/fetch/$s_!v8jG!,f_auto,q_auto:good,fl_progressive:steep/https://substack-post-media.s3.amazonaws.com/public/images/cae4e1db-9276-4a9a-8906-30871122f276_3708x1908.png"
     },
     {
       "title": "Cost Per Task: The Number Agent Benchmarks Leave Out",
       "link": "https://bayesiansapien.substack.com/p/cost-per-task-the-number-agent-benchmarks",
-      "date": "2026-09-05T15:00:50.000Z",
+      "date": "2026-09-05T20:30:50.000Z",
       "description": "Two agents at the same accuracy can differ ninefold in price. The gap is turns, retries and resent context.",
       "thumbnail": "https://substackcdn.com/image/fetch/$s_!bjCj!,f_auto,q_auto:good,fl_progressive:steep/https://substack-post-media.s3.amazonaws.com/public/images/1d2d1346-f25d-4519-b215-2cad905ca741_4368x2598.png"
-    },
-    {
-      "title": "Tokens Per Joule: The Number That Decides How Much AI Can Exist",
-      "link": "https://bayesiansapien.substack.com/p/tokens-per-joule-how-much-ai-can-exist",
-      "date": "2026-09-05T10:39:56.000Z",
-      "description": "Electricity is a rounding error on what a token costs, and the hard ceiling on how many can exist.",
-      "thumbnail": "https://substackcdn.com/image/fetch/$s_!mrtG!,f_auto,q_auto:good,fl_progressive:steep/https://substack-post-media.s3.amazonaws.com/public/images/f6a4e640-2c61-4f5d-a085-27cc0e081e08_3348x2778.png"
     }
   ]
 }
