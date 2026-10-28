@@ -43,6 +43,11 @@ export default function Footer({ revealed = true }) {
                   <path d="M15 3.604H1v1.891h14v-1.89ZM1 7.208V16l7-3.926L15 16V7.208zM15 0H1v1.89h14z"/>
                 </svg>
               </a>
+              <a style={stitch(605, revealed, 900)} href="https://open.spotify.com/show/033pFfRZXOPB4gyxbpMOnw" target="_blank" rel="noreferrer" className="flex items-center justify-center w-9 h-9 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="Cerebro Radio (Spotify)">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="#1DB954" className="group-hover:fill-emerald-600 transition">
+                  <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.669 11.538a.5.5 0 0 1-.686.165c-1.879-1.147-4.243-1.407-7.028-.77a.499.499 0 0 1-.222-.973c3.048-.696 5.662-.397 7.77.892a.5.5 0 0 1 .166.686m.979-2.178a.624.624 0 0 1-.858.205c-2.15-1.321-5.428-1.704-7.972-.932a.625.625 0 0 1-.362-1.194c2.905-.881 6.517-.454 8.986 1.063a.624.624 0 0 1 .206.858m.084-2.268C10.154 5.56 5.9 5.419 3.438 6.166a.748.748 0 1 1-.434-1.432c2.825-.857 7.523-.692 10.492 1.07a.747.747 0 1 1-.764 1.288"/>
+                </svg>
+              </a>
             </div>
           </div>
         </div>
