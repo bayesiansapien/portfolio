@@ -325,7 +325,8 @@ export default function Home() {
               // z-10: the translate/scale make this row its own stacking
               // context, which would otherwise paint beneath bg.js's canvas.
               'absolute left-1/2 -translate-x-1/2 z-10',
-              'flex justify-center items-center gap-6 w-full max-w-7xl px-4',
+              // Side tabs sit right of the card on wide screens and wrap below it otherwise
+              'flex flex-wrap min-[1360px]:flex-nowrap justify-center items-center gap-6 w-full max-w-[1380px] px-4',
               'transition-all duration-700 ease-out',
               revealed
                 // Born in the big bang: bursts out of the singularity once the
@@ -347,10 +348,72 @@ export default function Home() {
             aria-hidden={!revealed}
           >
 
+            <div className="hidden lg:block">
+              <div className="relative rounded-2xl p-3 ring-1 ring-white/10 bg-linear-to-b from-white/[0.07] to-white/[0.02] backdrop-blur-2xl backdrop-saturate-150 shadow-[0_0_40px_rgba(82,246,197,0.08)] overflow-hidden">
+                <div className="flex flex-col items-center gap-4">
+
+                  <div style={stitch(210, revealed)}>
+                    <a href="/resume.pdf" target="_blank" rel="noreferrer" className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="CV">
+                      <span className="text-xs font-medium text-gray-700 group-hover:text-emerald-600 transition">CV</span>
+                    </a>
+                  </div>
+
+                  <div style={stitch(211, revealed)}>
+                    <a href="https://scholar.google.com/citations?user=TtuSSF4AAAAJ&hl=en" target="_blank" rel="noreferrer" className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="Google Scholar">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#4285F4" className="group-hover:fill-emerald-600 transition">
+                        <path d="M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/>
+                      </svg>
+                    </a>
+                  </div>
+
+                  <div style={stitch(212, revealed)}>
+                    <a href="https://github.com/bayesiansapien" target="_blank" rel="noreferrer" className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="GitHub">
+                      <svg width="20" height="20" viewBox="0 0 16 16" fill="#000000" className="group-hover:fill-emerald-600 transition">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+                      </svg>
+                    </a>
+                  </div>
+
+                  <div style={stitch(213, revealed)}>
+                    <a href="https://www.linkedin.com/in/amit-singh-bhatti-278b0a83/" target="_blank" rel="noreferrer" className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="LinkedIn">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#0077B5" className="group-hover:fill-emerald-600 transition">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                      </svg>
+                    </a>
+                  </div>
+
+                  <div style={stitch(214, revealed)}>
+                    <a href="https://x.com/bayesiansapien" target="_blank" rel="noreferrer" className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="X (Twitter)">
+                      <svg width="20" height="20" viewBox="0 0 300 271" fill="#000000" className="group-hover:fill-emerald-600 transition">
+                        <path d="M236 0h46L181 115l118 156h-92.6l-72.5-94.8L59 271H13l107-123L0 0h94.9l65.5 86.6L236 0zm-16.1 243h25.5L80.4 26H53.2l166.7 217z"/>
+                      </svg>
+                    </a>
+                  </div>
+
+                  <div style={stitch(215, revealed)}>
+                    <a href="https://bayesiansapien.substack.com/" target="_blank" rel="noreferrer" className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="Substack">
+                      <svg width="20" height="20" viewBox="0 0 16 16" fill="#FF6719" className="group-hover:fill-emerald-600 transition">
+                        <path d="M15 3.604H1v1.891h14v-1.89ZM1 7.208V16l7-3.926L15 16V7.208zM15 0H1v1.89h14z"/>
+                      </svg>
+                    </a>
+                  </div>
+
+                  <div style={stitch(216, revealed)}>
+                    <a href="https://open.spotify.com/show/033pFfRZXOPB4gyxbpMOnw" target="_blank" rel="noreferrer" className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="Cerebro Radio (Spotify)">
+                      <svg width="20" height="20" viewBox="0 0 16 16" fill="#1DB954" className="group-hover:fill-emerald-600 transition">
+                        <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.669 11.538a.5.5 0 0 1-.686.165c-1.879-1.147-4.243-1.407-7.028-.77a.499.499 0 0 1-.222-.973c3.048-.696 5.662-.397 7.77.892a.5.5 0 0 1 .166.686m.979-2.178a.624.624 0 0 1-.858.205c-2.15-1.321-5.428-1.704-7.972-.932a.625.625 0 0 1-.362-1.194c2.905-.881 6.517-.454 8.986 1.063a.624.624 0 0 1 .206.858m.084-2.268C10.154 5.56 5.9 5.419 3.438 6.166a.748.748 0 1 1-.434-1.432c2.825-.857 7.523-.692 10.492 1.07a.747.747 0 1 1-.764 1.288"/>
+                      </svg>
+                    </a>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
             <div
               id="hero-bubble"
               data-revealed={revealed ? 'true' : 'false'}
-              className="relative w-full mx-auto text-center rounded-3xl p-6 md:p-8 ring-1 ring-white/10 bg-[#0b1220]/55 backdrop-blur-md backdrop-saturate-150 shadow-[0_0_60px_rgba(82,246,197,0.10)] after:content-[''] after:absolute after:inset-0 after:rounded-3xl after:pointer-events-none after:shadow-[inset_0_1px_0_rgba(255,255,255,0.10)] overflow-hidden z-10 max-w-[820px] md:max-w-[980px] lg:max-w-[1120px] poppins"
+              className="relative w-full mx-auto text-center rounded-3xl p-6 md:p-8 ring-1 ring-white/10 bg-[#0b1220]/55 backdrop-blur-md backdrop-saturate-150 shadow-[0_0_60px_rgba(82,246,197,0.10)] after:content-[''] after:absolute after:inset-0 after:rounded-3xl after:pointer-events-none after:shadow-[inset_0_1px_0_rgba(255,255,255,0.10)] overflow-hidden z-10 max-w-[820px] md:max-w-[980px] lg:w-[904px] lg:max-w-[calc(100%-88px)] lg:mx-0 shrink-0 poppins"
             >
               <button
                 type="button"
@@ -423,99 +486,10 @@ export default function Home() {
                   </a>
                 </span>
 
-                <span style={stitch(202, revealed)}>
-                  <a
-                    href="https://bayesiansapien.github.io/cere-bro/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 transition"
-                    aria-label="Research Wiki — daily AI research synthesis"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                    </svg>
-                    <span>Research Wiki</span>
-                  </a>
-                </span>
-                <span style={stitch(203, revealed)}>
-                  <a
-                    href="https://open.spotify.com/show/033pFfRZXOPB4gyxbpMOnw"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1DB954]/20 hover:bg-[#1DB954]/30 text-[#1ED760] transition"
-                    aria-label="Cerebro Radio podcast on Spotify"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                      <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.669 11.538a.5.5 0 0 1-.686.165c-1.879-1.147-4.243-1.407-7.028-.77a.499.499 0 0 1-.222-.973c3.048-.696 5.662-.397 7.77.892a.5.5 0 0 1 .166.686m.979-2.178a.624.624 0 0 1-.858.205c-2.15-1.321-5.428-1.704-7.972-.932a.625.625 0 0 1-.362-1.194c2.905-.881 6.517-.454 8.986 1.063a.624.624 0 0 1 .206.858m.084-2.268C10.154 5.56 5.9 5.419 3.438 6.166a.748.748 0 1 1-.434-1.432c2.825-.857 7.523-.692 10.492 1.07a.747.747 0 1 1-.764 1.288"/>
-                    </svg>
-                    <span>Cerebro Radio</span>
-                  </a>
-                </span>
               </div>
             </div>
 
-            <div className="hidden lg:block">
-              <div className="relative rounded-2xl p-3 ring-1 ring-white/10 bg-linear-to-b from-white/[0.07] to-white/[0.02] backdrop-blur-2xl backdrop-saturate-150 shadow-[0_0_40px_rgba(82,246,197,0.08)] overflow-hidden">
-                <div className="flex flex-col items-center gap-4">
-
-                  <div style={stitch(210, revealed)}>
-                    <a href="/resume.pdf" target="_blank" rel="noreferrer" className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="CV">
-                      <span className="text-xs font-medium text-gray-700 group-hover:text-emerald-600 transition">CV</span>
-                    </a>
-                  </div>
-
-                  <div style={stitch(211, revealed)}>
-                    <a href="https://scholar.google.com/citations?user=TtuSSF4AAAAJ&hl=en" target="_blank" rel="noreferrer" className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="Google Scholar">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#4285F4" className="group-hover:fill-emerald-600 transition">
-                        <path d="M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/>
-                      </svg>
-                    </a>
-                  </div>
-
-                  <div style={stitch(212, revealed)}>
-                    <a href="https://github.com/bayesiansapien" target="_blank" rel="noreferrer" className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="GitHub">
-                      <svg width="20" height="20" viewBox="0 0 16 16" fill="#000000" className="group-hover:fill-emerald-600 transition">
-                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
-                      </svg>
-                    </a>
-                  </div>
-
-                  <div style={stitch(213, revealed)}>
-                    <a href="https://www.linkedin.com/in/amit-singh-bhatti-278b0a83/" target="_blank" rel="noreferrer" className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="LinkedIn">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#0077B5" className="group-hover:fill-emerald-600 transition">
-                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                      </svg>
-                    </a>
-                  </div>
-
-                  <div style={stitch(214, revealed)}>
-                    <a href="https://x.com/bayesiansapien" target="_blank" rel="noreferrer" className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="X (Twitter)">
-                      <svg width="20" height="20" viewBox="0 0 300 271" fill="#000000" className="group-hover:fill-emerald-600 transition">
-                        <path d="M236 0h46L181 115l118 156h-92.6l-72.5-94.8L59 271H13l107-123L0 0h94.9l65.5 86.6L236 0zm-16.1 243h25.5L80.4 26H53.2l166.7 217z"/>
-                      </svg>
-                    </a>
-                  </div>
-
-                  <div style={stitch(215, revealed)}>
-                    <a href="https://bayesiansapien.substack.com/" target="_blank" rel="noreferrer" className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="Substack">
-                      <svg width="20" height="20" viewBox="0 0 16 16" fill="#FF6719" className="group-hover:fill-emerald-600 transition">
-                        <path d="M15 3.604H1v1.891h14v-1.89ZM1 7.208V16l7-3.926L15 16V7.208zM15 0H1v1.89h14z"/>
-                      </svg>
-                    </a>
-                  </div>
-
-                  <div style={stitch(216, revealed)}>
-                    <a href="https://open.spotify.com/show/033pFfRZXOPB4gyxbpMOnw" target="_blank" rel="noreferrer" className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-100 rounded-lg transition group" title="Cerebro Radio (Spotify)">
-                      <svg width="20" height="20" viewBox="0 0 16 16" fill="#1DB954" className="group-hover:fill-emerald-600 transition">
-                        <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.669 11.538a.5.5 0 0 1-.686.165c-1.879-1.147-4.243-1.407-7.028-.77a.499.499 0 0 1-.222-.973c3.048-.696 5.662-.397 7.77.892a.5.5 0 0 1 .166.686m.979-2.178a.624.624 0 0 1-.858.205c-2.15-1.321-5.428-1.704-7.972-.932a.625.625 0 0 1-.362-1.194c2.905-.881 6.517-.454 8.986 1.063a.624.624 0 0 1 .206.858m.084-2.268C10.154 5.56 5.9 5.419 3.438 6.166a.748.748 0 1 1-.434-1.432c2.825-.857 7.523-.692 10.492 1.07a.747.747 0 1 1-.764 1.288"/>
-                      </svg>
-                    </a>
-                  </div>
-
-                </div>
-              </div>
-            </div>
+            <PodcastDigest revealed={revealed} />
 
           </div>
         </section>
@@ -540,7 +514,6 @@ export default function Home() {
           aria-hidden={!revealed}
         >
           <RecentBlogPosts revealed={revealed} />
-          <PodcastDigest revealed={revealed} />
         </div>
       </main>
 
