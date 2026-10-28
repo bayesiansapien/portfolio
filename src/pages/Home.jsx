@@ -325,8 +325,7 @@ export default function Home() {
               // z-10: the translate/scale make this row its own stacking
               // context, which would otherwise paint beneath bg.js's canvas.
               'absolute left-1/2 -translate-x-1/2 z-10',
-              // Side tabs sit right of the card on wide screens and wrap below it otherwise
-              'flex flex-wrap min-[1360px]:flex-nowrap justify-center items-center gap-6 w-full max-w-[1380px] px-4',
+              'flex justify-center items-center gap-6 w-screen max-w-7xl px-4',
               'transition-all duration-700 ease-out',
               revealed
                 // Born in the big bang: bursts out of the singularity once the
@@ -347,6 +346,90 @@ export default function Home() {
             }}
             aria-hidden={!revealed}
           >
+
+            {/* Mirrors the icon bar so the card itself sits at the screen's center */}
+            <div className="hidden lg:block w-16 shrink-0" aria-hidden="true" />
+
+            <div
+              id="hero-bubble"
+              data-revealed={revealed ? 'true' : 'false'}
+              className="relative w-full mx-auto text-center rounded-3xl p-6 md:p-8 ring-1 ring-white/10 bg-[#0b1220]/55 backdrop-blur-md backdrop-saturate-150 shadow-[0_0_60px_rgba(82,246,197,0.10)] after:content-[''] after:absolute after:inset-0 after:rounded-3xl after:pointer-events-none after:shadow-[inset_0_1px_0_rgba(255,255,255,0.10)] overflow-hidden z-10 max-w-[820px] md:max-w-[980px] lg:max-w-[904px] poppins"
+            >
+              <button
+                type="button"
+                onClick={close}
+                aria-label="Close about me"
+                tabIndex={revealed ? 0 : -1}
+                className="absolute top-3 right-3 z-20 w-9 h-9 rounded-full ring-1 ring-white/15 hover:ring-white/30 bg-black/30 hover:bg-black/40 backdrop-blur text-slate-300 hover:text-white flex items-center justify-center transition"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+
+              <div style={stitch(0, revealed)}>
+                <img
+                  src="/avatar.png"
+                  className="mx-auto mb-6 w-36 h-36 md:w-36 md:h-36 rounded-full object-cover ring-1 ring-white/15 shadow-lg"
+                  alt="Avatar"
+                />
+              </div>
+
+              <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight leading-tight">
+                <Stitched text="Hello, I'm" from={1} revealed={revealed} />
+                <span className="text-emerald-300">
+                  <Stitched text="Amit Singh Bhatti" from={3} revealed={revealed} />
+                </span>
+              </h1>
+
+              <p className="mx-auto max-w-[1200px] lg:max-w-[1240px] text-[16px] md:text-[17px] lg:text-[14px] md:text-[15px] lg:text-[16px] tracking-[0.005em] leading-7 md:leading-7 lg:leading-7">
+                <Stitched
+                  text="A Minimalist Bayesian Sapien, adding to the universe's entropy while playing Maxwell's demon for machine intelligence, sorting signal from heat. I'm a research-to-product lead working on the expensive half of intelligence, the serving systems, routing infrastructure, compression and quantization that I tune until every token earns its keep. I think hardware-first, from GPU kernels and memory hierarchies up to agentic intelligence optimization and test-time compute, teaching models how hard to think before they spend. What I'm after is AI that is reliable, fast and cheap enough to disappear into the product."
+                  from={10}
+                  revealed={revealed}
+                />
+              </p>
+
+              <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center items-center">
+                <span style={stitch(200, revealed)}>
+                  <a
+                    href="https://bayesiansapien.substack.com/subscribe"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition"
+                    aria-label="Subscribe by Email on Substack"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="0" y="0" width="24" height="24" rx="3" fill="#FF6719"></rect>
+                      <rect x="4" y="6" width="16" height="2" fill="white"></rect>
+                      <rect x="4" y="10" width="16" height="2" fill="white"></rect>
+                      <rect x="8" y="14" width="8" height="6" fill="white"></rect>
+                    </svg>
+                    <span>Subscribe by Email</span>
+                  </a>
+                </span>
+
+                <span style={stitch(201, revealed)}>
+                  <a
+                    href="https://bayesiansapien.substack.com/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 transition"
+                    aria-label="RSS Feed"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M4 11a9 9 0 0 1 9 9"></path>
+                      <path d="M4 4a16 16 0 0 1 16 16"></path>
+                      <circle cx="5" cy="19" r="1"></circle>
+                    </svg>
+                    <span>RSS Feed</span>
+                  </a>
+                </span>
+
+              </div>
+
+              <PodcastDigest revealed={revealed} />
+            </div>
 
             <div className="hidden lg:block">
               <div className="relative rounded-2xl p-3 ring-1 ring-white/10 bg-linear-to-b from-white/[0.07] to-white/[0.02] backdrop-blur-2xl backdrop-saturate-150 shadow-[0_0_40px_rgba(82,246,197,0.08)] overflow-hidden">
@@ -409,87 +492,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-
-            <div
-              id="hero-bubble"
-              data-revealed={revealed ? 'true' : 'false'}
-              className="relative w-full mx-auto text-center rounded-3xl p-6 md:p-8 ring-1 ring-white/10 bg-[#0b1220]/55 backdrop-blur-md backdrop-saturate-150 shadow-[0_0_60px_rgba(82,246,197,0.10)] after:content-[''] after:absolute after:inset-0 after:rounded-3xl after:pointer-events-none after:shadow-[inset_0_1px_0_rgba(255,255,255,0.10)] overflow-hidden z-10 max-w-[820px] md:max-w-[980px] lg:w-[904px] lg:max-w-[calc(100%-88px)] lg:mx-0 shrink-0 poppins"
-            >
-              <button
-                type="button"
-                onClick={close}
-                aria-label="Close about me"
-                tabIndex={revealed ? 0 : -1}
-                className="absolute top-3 right-3 z-20 w-9 h-9 rounded-full ring-1 ring-white/15 hover:ring-white/30 bg-black/30 hover:bg-black/40 backdrop-blur text-slate-300 hover:text-white flex items-center justify-center transition"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M18 6L6 18M6 6l12 12" />
-                </svg>
-              </button>
-
-              <div style={stitch(0, revealed)}>
-                <img
-                  src="/avatar.png"
-                  className="mx-auto mb-6 w-36 h-36 md:w-36 md:h-36 rounded-full object-cover ring-1 ring-white/15 shadow-lg"
-                  alt="Avatar"
-                />
-              </div>
-
-              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight leading-tight">
-                <Stitched text="Hello, I'm" from={1} revealed={revealed} />
-                <span className="text-emerald-300">
-                  <Stitched text="Amit Singh Bhatti" from={3} revealed={revealed} />
-                </span>
-              </h1>
-
-              <p className="mx-auto max-w-[1200px] lg:max-w-[1240px] text-[16px] md:text-[17px] lg:text-[14px] md:text-[15px] lg:text-[16px] tracking-[0.005em] leading-7 md:leading-7 lg:leading-7">
-                <Stitched
-                  text="A Minimalist Bayesian Sapien, adding to the universe's entropy while playing Maxwell's demon for machine intelligence, sorting signal from heat. I'm a research-to-product lead working on the expensive half of intelligence, the serving systems, routing infrastructure, compression and quantization that I tune until every token earns its keep. I think hardware-first, from GPU kernels and memory hierarchies up to agentic intelligence optimization and test-time compute, teaching models how hard to think before they spend. What I'm after is AI that is reliable, fast and cheap enough to disappear into the product."
-                  from={10}
-                  revealed={revealed}
-                />
-              </p>
-
-              <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center items-center">
-                <span style={stitch(200, revealed)}>
-                  <a
-                    href="https://bayesiansapien.substack.com/subscribe"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition"
-                    aria-label="Subscribe by Email on Substack"
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-                      <rect x="0" y="0" width="24" height="24" rx="3" fill="#FF6719"></rect>
-                      <rect x="4" y="6" width="16" height="2" fill="white"></rect>
-                      <rect x="4" y="10" width="16" height="2" fill="white"></rect>
-                      <rect x="8" y="14" width="8" height="6" fill="white"></rect>
-                    </svg>
-                    <span>Subscribe by Email</span>
-                  </a>
-                </span>
-
-                <span style={stitch(201, revealed)}>
-                  <a
-                    href="https://bayesiansapien.substack.com/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 transition"
-                    aria-label="RSS Feed"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M4 11a9 9 0 0 1 9 9"></path>
-                      <path d="M4 4a16 16 0 0 1 16 16"></path>
-                      <circle cx="5" cy="19" r="1"></circle>
-                    </svg>
-                    <span>RSS Feed</span>
-                  </a>
-                </span>
-
-              </div>
-            </div>
-
-            <PodcastDigest revealed={revealed} />
 
           </div>
         </section>
