@@ -88,7 +88,7 @@ function App() {
         <Route path="/ask" element={<Ask />} />
       </Routes>
       <footer className="max-w-5xl mx-auto px-4 py-10 text-xs text-slate-400">
-        © {new Date().getFullYear()} Amit Singh Bhatti · bayesiansapien.tech
+        © {new Date().getFullYear()} Amit Singh Bhatti · bayesiansapien.com
       </footer>
     </div>
   );
