@@ -15,7 +15,7 @@ This applies retroactively too: if a commit / PR / file gets re-edited, strip an
 
 ## What this is
 
-Personal portfolio for **bayesiansapien.com** (Amit Singh Bhatti). Single-page React app, two routes, a full-viewport animated spiral-galaxy canvas in the background, a sigil "front door" that reveals the bio on click through a collapse / big-bang transition, and a Recent Posts list fed from Substack. Deployed as a static site built from source (Netlify-style `_redirects` rewrites everything to `index.html`). `dist/` and `node_modules/` are gitignored — the host runs `npm run build`.
+Personal portfolio for **bayesiansapien.com** (Amit Singh Bhatti). Single-page React app, two routes, a full-viewport animated spiral-galaxy canvas in the background, a sigil "front door" that reveals the bio on click through a collapse / big-bang transition, and a Recent Posts list fed from Substack. Deployed on Cloudflare Workers static assets (`wrangler.jsonc`; `not_found_handling: single-page-application` serves `index.html` for client routes). Do not add a `_redirects` file: Cloudflare rejects `/* /index.html 200` as an infinite loop. `dist/` and `node_modules/` are gitignored — the host runs `npm run build`.
 
 ## Stack
 
